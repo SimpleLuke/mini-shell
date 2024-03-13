@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:09:50 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/13 16:27:49 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int main()
 		// printf("%s\n", inputString);
 		tokenize(inputString, &tk_list);
 		print_node(tk_list);
+		ft_lstclear(&tk_list, free);
 		// printf("%s\n", (char *)tk_list->content);
 
 		// ft_lstiter(tk_list, (void *)print_node);

@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:16:01 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/13 16:30:22 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	tmp_to_tokens(t_list **tk_list, t_list *tmp)
 	char	*token;
 
 	i = 0;
+	if (tmp == NULL)
+		return ;
 	size = ft_lstsize(tmp);
 	token = malloc((size + 1) * sizeof(char));
 	while (i < size)
@@ -27,7 +29,7 @@ void	tmp_to_tokens(t_list **tk_list, t_list *tmp)
 		tmp = tmp->next;
 		i++;
 	}
-	// printf("%s\n", token);
+	token[i] = '\0';
 	ft_lstadd_back(tk_list, ft_lstnew(token));
 }
 
@@ -45,7 +47,7 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 	// str = ft_strdup("");
 	while (*cmd_line != '\0')
 	{
-		if (ft_isalpha(*cmd_line))
+		if (ft_isalpha(*cmd_line) || *cmd_line == '-')
 		{
 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
 		}
@@ -56,5 +58,4 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 			ft_lstclear(&tmp, free);
 		}
 	}
-	// printf("%s\n", (char *)tk_list->content);
 }
