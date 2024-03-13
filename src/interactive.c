@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/03/09 20:17:44 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/12 22:49:16 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,13 @@ void	printDir()
 }
 
 // Function to take input
-int	takeInput(char *str)
+int	takeInput(char **str)
 {
 	char	*buf;
 
 	rl_catch_signals = 0;
 	buf = readline("$ ");
+	// printf("%s\n", buf);
 	if (!buf)
 	{
 		printf("exit\n");
@@ -36,7 +37,13 @@ int	takeInput(char *str)
 	else if (ft_strlen(buf) != 0)
 	{
 		add_history(buf);
-		ft_strlcpy(str, buf, sizeof(buf));
+		*str = malloc(ft_strlen(buf) * sizeof(char) + 1);
+		ft_strlcpy(*str, buf, ft_strlen(buf) + 1);
+		// printf("LEN: %d\n", (int)ft_strlen(buf));
+		// printf("BUF: %s\n", buf);
+		// printf("SIZE BUF: %zu\n", sizeof(buf));
+		// printf("SIZE STR: %zu\n", sizeof(str));
+		// printf("HERE: %s\n", *str);
 		free(buf);
 		return (0);
 	}
