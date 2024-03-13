@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:38:28 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/13 17:58:41 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,16 @@ void	tmp_to_tokens(t_list **tk_list, t_list *tmp)
 	ft_lstadd_back(tk_list, ft_lstnew(token));
 }
 
+int	ft_isfilename(char c)
+{
+	if (c == '#' || c == '%' || c == '+' || c == ',' || c == '-' || 
+		c == '.' || c == '/' || c == ':' || c == '?' || c == '@' ||
+		c == 92 || c == '^' || c == 94 || c == 96 || c == '{' ||
+		c == '}' || c == '~')
+		return (1);
+	return (0);
+}
+
 void	tokenize(char *cmd_line, t_list **tk_list)
 {
 	// char	*str;
@@ -47,7 +57,7 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 	// str = ft_strdup("");
 	while (*cmd_line != '\0')
 	{
-		if (ft_isalnum(*cmd_line) || *cmd_line == '-' || *cmd_line == '_')
+		if (ft_isalnum(*cmd_line) || *cmd_line == '-' || *cmd_line == '_' || ft_isfilename(*cmd_line))
 		{
 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
 		}
@@ -68,7 +78,7 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 			continue;
 		}
 		cmd_line++;
-		if (*cmd_line == ' ' || *cmd_line == '\0')
+		if (*cmd_line == ' ' || *cmd_line == '\0' || *cmd_line == '>' || *cmd_line == '<')
 		{
 			tmp_to_tokens(tk_list, tmp);
 			ft_lstclear(&tmp, free);
