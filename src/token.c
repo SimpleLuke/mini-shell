@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 17:21:26 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 17:35:00 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,21 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 		chtype = getchartype(cmd_line[i]);
 		if (state == STATE_GENERAL)
 		{
-			if (chtype == CHAR_GENERAL)
+			if (chtype == CHAR_QOUTE)
+			{
+				state = STATE_IN_QUOTE;
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			}
+			else if (chtype == CHAR_DQUOTE)
+			{
+				state = STATE_IN_DQUOTE;
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			}
+			else if (chtype == CHAR_GENERAL)
 			{
 				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
 			}
-			else if (chtype == CHAR_GREATER || chtype == CHAR_LESSER)
+			else if (chtype == CHAR_GREATER || chtype == CHAR_LESSER || chtype == CHAR_PIPE)
 			{
 				if (tmp != NULL)
 				{
@@ -106,6 +116,18 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 				tmp_to_tokens(tk_list, tmp);
 				ft_lstclear(&tmp, free);
 			}
+		}
+		else if (state == STATE_IN_DQUOTE)
+		{
+			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			if (cmd_line[i] == CHAR_DQUOTE)
+				state = STATE_GENERAL;
+		}
+		else if (state == STATE_IN_QUOTE)
+		{
+			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			if (cmd_line[i] == CHAR_QOUTE)
+				state = STATE_GENERAL;
 		}
 		if (cmd_line[i] == '\0')
 			break ;
