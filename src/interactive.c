@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/03/12 22:49:16 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 21:06:51 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	takeInput(char **str)
 	char	*buf;
 
 	rl_catch_signals = 0;
-	buf = readline("$ ");
+	buf = readline("minishell$ ");
 	// printf("%s\n", buf);
 	if (!buf)
 	{

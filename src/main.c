@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:27:49 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 21:06:35 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main()
 	ignore_control_key();
 	while (1)
 	{
-		printDir();
+		// printDir();
 		if (takeInput(&inputString))
 			continue;
 		// printf("%s\n", inputString);
