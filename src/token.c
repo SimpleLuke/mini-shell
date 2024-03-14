@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 17:43:30 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 19:30:43 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,10 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 					tmp_to_tokens(tk_list, tmp);
 					ft_lstclear(&tmp, free);
 				}
+				if (chtype == CHAR_GREATER && cmd_line[i + 1] == CHAR_GREATER)
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i++]))));
+				if (chtype == CHAR_LESSER && cmd_line[i + 1] == CHAR_LESSER)
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i++]))));
 				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
 				tmp_to_tokens(tk_list, tmp);
 				ft_lstclear(&tmp, free);
@@ -139,45 +143,45 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 	}
 }
 
-void	tokenize2(char *cmd_line, t_list **tk_list)
-{
-	// char	*str;
-	// char	*src;
-	// t_list	*tk_node;
-	t_list	*tmp;
-
-	tmp = NULL;
-	if (*cmd_line == '\0')
-		return ;
-	// src = cmd_line;
-	// str = ft_strdup("");
-	while (*cmd_line != '\0')
-	{
-		if (ft_isalnum(*cmd_line) || *cmd_line == '-' || *cmd_line == '_' || ft_isfilename(*cmd_line))
-		{
-			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-		}
-		else if (*cmd_line == '<')
-		{
-			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-			tmp_to_tokens(tk_list, tmp);
-			ft_lstclear(&tmp, free);
-			cmd_line++;
-			continue;
-		}
-		else if (*cmd_line == '>')
-		{
-			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-			tmp_to_tokens(tk_list, tmp);
-			ft_lstclear(&tmp, free);
-			cmd_line++;
-			continue;
-		}
-		cmd_line++;
-		if (*cmd_line == ' ' || *cmd_line == '\0' || *cmd_line == '>' || *cmd_line == '<')
-		{
-			tmp_to_tokens(tk_list, tmp);
-			ft_lstclear(&tmp, free);
-		}
-	}
-}
+// void	tokenize2(char *cmd_line, t_list **tk_list)
+// {
+// 	// char	*str;
+// 	// char	*src;
+// 	// t_list	*tk_node;
+// 	t_list	*tmp;
+//
+// 	tmp = NULL;
+// 	if (*cmd_line == '\0')
+// 		return ;
+// 	// src = cmd_line;
+// 	// str = ft_strdup("");
+// 	while (*cmd_line != '\0')
+// 	{
+// 		if (ft_isalnum(*cmd_line) || *cmd_line == '-' || *cmd_line == '_' || ft_isfilename(*cmd_line))
+// 		{
+// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
+// 		}
+// 		else if (*cmd_line == '<')
+// 		{
+// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
+// 			tmp_to_tokens(tk_list, tmp);
+// 			ft_lstclear(&tmp, free);
+// 			cmd_line++;
+// 			continue;
+// 		}
+// 		else if (*cmd_line == '>')
+// 		{
+// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
+// 			tmp_to_tokens(tk_list, tmp);
+// 			ft_lstclear(&tmp, free);
+// 			cmd_line++;
+// 			continue;
+// 		}
+// 		cmd_line++;
+// 		if (*cmd_line == ' ' || *cmd_line == '\0' || *cmd_line == '>' || *cmd_line == '<')
+// 		{
+// 			tmp_to_tokens(tk_list, tmp);
+// 			ft_lstclear(&tmp, free);
+// 		}
+// 	}
+// }
