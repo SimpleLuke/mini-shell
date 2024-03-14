@@ -6,12 +6,11 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 19:30:43 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 21:14:06 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
 int getchartype(char c)
 {
 	if (c == '\'')
@@ -130,12 +129,22 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
 			if (cmd_line[i] == CHAR_DQUOTE)
 				state = STATE_GENERAL;
+			else if (cmd_line[i] == CHAR_NULL)
+			{
+				tmp_to_tokens(tk_list, tmp);
+				ft_lstclear(&tmp, free);
+			}
 		}
 		else if (state == STATE_IN_QUOTE)
 		{
 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
 			if (cmd_line[i] == CHAR_QOUTE)
 				state = STATE_GENERAL;
+			else if (cmd_line[i] == CHAR_NULL)
+			{
+				tmp_to_tokens(tk_list, tmp);
+				ft_lstclear(&tmp, free);
+			}
 		}
 		if (cmd_line[i] == '\0')
 			break ;
