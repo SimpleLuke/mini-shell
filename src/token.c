@@ -6,11 +6,37 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 17:58:41 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 17:21:26 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int getchartype(char c)
+{
+	if (c == '\'')
+		return CHAR_QOUTE;
+	else if (c == '\"')
+		return CHAR_DQUOTE;
+	else if (c == '|')
+		return CHAR_PIPE;
+	else if (c == ' ')
+		return CHAR_WHITESPACE;
+	else if (c== '\\')
+		return CHAR_ESCAPESEQUENCE;
+	else if (c == '\t')
+		return CHAR_TAB;
+	else if (c == '\n')
+		return CHAR_NEWLINE;
+	else if (c == '>')
+		return CHAR_GREATER;
+	else if (c == '<')
+		return CHAR_LESSER;
+	else if (c == '\0')
+		return CHAR_NULL;
+	else
+		return CHAR_GENERAL;
+}
 
 void	tmp_to_tokens(t_list **tk_list, t_list *tmp)
 {
@@ -44,6 +70,50 @@ int	ft_isfilename(char c)
 }
 
 void	tokenize(char *cmd_line, t_list **tk_list)
+{
+	int state;
+	t_list	*tmp;
+	int chtype;
+	int	i;
+
+	i = 0;
+	tmp = NULL;
+	if (*cmd_line == '\0')
+		return ;
+	state = STATE_GENERAL;
+	while (1)
+	{
+		chtype = getchartype(cmd_line[i]);
+		if (state == STATE_GENERAL)
+		{
+			if (chtype == CHAR_GENERAL)
+			{
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			}
+			else if (chtype == CHAR_GREATER || chtype == CHAR_LESSER)
+			{
+				if (tmp != NULL)
+				{
+					tmp_to_tokens(tk_list, tmp);
+					ft_lstclear(&tmp, free);
+				}
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+				tmp_to_tokens(tk_list, tmp);
+				ft_lstclear(&tmp, free);
+			}
+			else if (chtype == CHAR_WHITESPACE || chtype == CHAR_NULL)
+			{
+				tmp_to_tokens(tk_list, tmp);
+				ft_lstclear(&tmp, free);
+			}
+		}
+		if (cmd_line[i] == '\0')
+			break ;
+		i++;
+	}
+}
+
+void	tokenize2(char *cmd_line, t_list **tk_list)
 {
 	// char	*str;
 	// char	*src;

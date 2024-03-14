@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:08:22 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 16:47:25 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,31 @@
 
 #define MAXCOM 1000
 #define MAXLIST 100
+
+enum TokenType{
+	CHAR_GENERAL = -1,
+	CHAR_PIPE = '|',
+	CHAR_AMPERSAND = '&',
+	CHAR_QOUTE = '\'',
+	CHAR_DQUOTE = '\"',
+	CHAR_SEMICOLON = ';',
+	CHAR_WHITESPACE = ' ',
+	CHAR_ESCAPESEQUENCE = '\\',
+	CHAR_TAB = '\t',
+	CHAR_NEWLINE = '\n',
+	CHAR_GREATER = '>',
+	CHAR_LESSER = '<',
+	CHAR_NULL = 0,
+	
+	TOKEN	= -1,
+};
+
+enum {
+	STATE_IN_DQUOTE,
+	STATE_IN_QUOTE,
+	STATE_IN_ESCAPESEQ,
+	STATE_GENERAL,
+};
 
 typedef struct s_tk_node{
 	char				*token;
