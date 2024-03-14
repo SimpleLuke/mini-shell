@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 21:14:06 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 21:16:49 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 				ft_lstclear(&tmp, free);
 			}
 		}
-		if (cmd_line[i] == '\0')
+		if (cmd_line[i] == CHAR_NULL)
 			break ;
 		i++;
 	}
