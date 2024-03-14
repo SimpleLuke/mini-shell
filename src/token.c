@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 17:35:00 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/14 17:43:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,10 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 			{
 				state = STATE_IN_DQUOTE;
 				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+			}
+			else if (chtype == CHAR_ESCAPESEQUENCE)
+			{
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[++i]))));
 			}
 			else if (chtype == CHAR_GENERAL)
 			{
