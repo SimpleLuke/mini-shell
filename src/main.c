@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 21:06:35 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/18 11:34:42 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int main()
 {
 	char	*inputString;
 	t_list	*tk_list = NULL;
+	t_ASTNode	*exectree;
 
 	ignore_control_key();
 	while (1)
@@ -35,6 +36,7 @@ int main()
 		// printf("%s\n", inputString);
 		tokenize(inputString, &tk_list);
 		print_node(tk_list);
+		parse(tk_list, &exectree);
 		ft_lstclear(&tk_list, free);
 		// printf("%s\n", (char *)tk_list->content);
 

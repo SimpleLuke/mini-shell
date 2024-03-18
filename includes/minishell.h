@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 16:47:25 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/18 13:18:16 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,40 @@ enum {
 	STATE_GENERAL,
 };
 
-typedef struct s_tk_node{
-	char				*token;
-	struct s_tk_node	*next;
-} t_tk_node;
+// typedef struct s_tk_node{
+// 	char				*token;
+// 	struct s_tk_node	*next;
+// } t_tk_node;
+//
+typedef enum
+{
+	NODE_PIPE = (1 << 0),
+	NODE_BCKGRND 		= (1 << 1),
+    NODE_SEQ 			= (1 << 2),
+    NODE_REDIRECT_IN 	= (1 << 3),
+    NODE_REDIRECT_OUT 	= (1 << 4),
+    NODE_CMDPATH		= (1 << 5),
+    NODE_ARGUMENT		= (1 << 6),
+
+    NODE_DATA 			= (1 << 7),
+}	NodeType;
+
+typedef struct s_ASTNode
+{
+	int				type;
+	char			*data;
+	struct s_ASTNode	*left;
+	struct s_ASTNode	*right;
+}	t_ASTNode;
 
 void	ignore_control_key();
 void	printDir();
 int		takeInput(char **str);
 void	tokenize(char *cmd_line, t_list **tk_list);
+int		parse(t_list *token_list, t_ASTNode **syntax_tree);
+void	ASTattachBinaryBranch(t_ASTNode *root, t_ASTNode *leftNode, t_ASTNode *rightNode);
+void	ASTnodeSetType(t_ASTNode *node, NodeType nodetype);
+void	ASTnodeSetData(t_ASTNode *node, char *data);
+void	ASTnodeDelete(t_ASTNode *node);
 
 #endif // !MINISHELL_H
