@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 20:00:46 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 23:05:56 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,8 @@ void	astAttachBinaryBranch(t_ast *root, t_ast *leftNode, t_ast *rightNode);
 void	astNodeSetType(t_ast *node, NodeType nodetype);
 void	astNodeSetData(t_ast *node, char *data);
 void	astNodeDelete(t_ast *node);
+
+
+void printTree(t_ast* root);
 
 #endif // !MINISHELL_H
