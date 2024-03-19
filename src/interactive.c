@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 21:17:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 19:17:59 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ void	printDir()
 }
 
 // Function to take input
-int	takeInput(char **str)
+int	takeInput(t_data *data)
 {
 	char	*buf;
 
-	rl_catch_signals = 0;
+	// rl_catch_signals = 0;
 	buf = readline("minishell$ ");
 	// printf("%s\n", buf);
 	if (!buf)
@@ -37,8 +37,8 @@ int	takeInput(char **str)
 	else if (ft_strlen(buf) != 0)
 	{
 		add_history(buf);
-		*str = malloc(ft_strlen(buf) * sizeof(char) + 1);
-		ft_strlcpy(*str, buf, ft_strlen(buf) + 1);
+		data->inputString = malloc(ft_strlen(buf) * sizeof(char) + 1);
+		ft_strlcpy(data->inputString, buf, ft_strlen(buf) + 1);
 		// printf("LEN: %d\n", (int)ft_strlen(buf));
 		// printf("BUF: %s\n", buf);
 		// printf("SIZE BUF: %zu\n", sizeof(buf));
@@ -60,7 +60,7 @@ void	signint_handler(int signum)
 {
 	(void) signum;
 	write(1, "\n", 1);
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	// printDir();
 	rl_on_new_line();
 	rl_redisplay();

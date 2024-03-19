@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/18 13:18:16 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 19:16:38 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,12 @@ enum {
 	STATE_GENERAL,
 };
 
+typedef struct s_token
+{
+	int		type;
+	char	*data;
+}	t_token;
+
 // typedef struct s_tk_node{
 // 	char				*token;
 // 	struct s_tk_node	*next;
@@ -72,10 +78,17 @@ typedef struct s_ASTNode
 	struct s_ASTNode	*right;
 }	t_ASTNode;
 
+typedef struct s_data
+{
+	char	*inputString;
+	t_list	*tk_list;
+}	t_data;
+
 void	ignore_control_key();
 void	printDir();
-int		takeInput(char **str);
-void	tokenize(char *cmd_line, t_list **tk_list);
+int		takeInput(t_data *data);
+// void	tokenize(char *cmd_line, t_list **tk_list);
+void	tokenize(t_data *data);
 int		parse(t_list *token_list, t_ASTNode **syntax_tree);
 void	ASTattachBinaryBranch(t_ASTNode *root, t_ASTNode *leftNode, t_ASTNode *rightNode);
 void	ASTnodeSetType(t_ASTNode *node, NodeType nodetype);

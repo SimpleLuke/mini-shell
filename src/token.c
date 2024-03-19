@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/14 21:16:49 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 19:21:41 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,29 @@ int getchartype(char c)
 		return CHAR_GENERAL;
 }
 
-void	tmp_to_tokens(t_list **tk_list, t_list *tmp)
+void	tmp_to_tokens(t_data *data, t_list *tmp, int type)
 {
 	int	size;
 	int	i;
-	char	*token;
+	char	*tokenstr;
+	t_token	*token;
 
 	i = 0;
 	if (tmp == NULL)
 		return ;
 	size = ft_lstsize(tmp);
-	token = malloc((size + 1) * sizeof(char));
+	tokenstr = malloc((size + 1) * sizeof(char));
 	while (i < size)
 	{
-		token[i] = *(char *)tmp->content;
+		tokenstr[i] = *(char *)tmp->content;
 		tmp = tmp->next;
 		i++;
 	}
-	token[i] = '\0';
-	ft_lstadd_back(tk_list, ft_lstnew(token));
+	tokenstr[i] = '\0';
+	token = (t_token *)malloc(sizeof(t_token));
+	token->data = tokenstr;
+	token->type = type;
+	ft_lstadd_back(&data->tk_list, ft_lstnew(token));
 }
 
 int	ft_isfilename(char c)
@@ -68,7 +72,8 @@ int	ft_isfilename(char c)
 	return (0);
 }
 
-void	tokenize(char *cmd_line, t_list **tk_list)
+// void	tokenize(char *data->inputString, t_list **data->tk_list)
+void	tokenize(t_data *data)
 {
 	int state;
 	t_list	*tmp;
@@ -77,120 +82,77 @@ void	tokenize(char *cmd_line, t_list **tk_list)
 
 	i = 0;
 	tmp = NULL;
-	if (*cmd_line == '\0')
+	if (*data->inputString == '\0')
 		return ;
 	state = STATE_GENERAL;
 	while (1)
 	{
-		chtype = getchartype(cmd_line[i]);
+		chtype = getchartype(data->inputString[i]);
 		if (state == STATE_GENERAL)
 		{
 			if (chtype == CHAR_QOUTE)
 			{
 				state = STATE_IN_QUOTE;
-				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
 			}
 			else if (chtype == CHAR_DQUOTE)
 			{
 				state = STATE_IN_DQUOTE;
-				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
 			}
 			else if (chtype == CHAR_ESCAPESEQUENCE)
 			{
-				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[++i]))));
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[++i]))));
 			}
 			else if (chtype == CHAR_GENERAL)
 			{
-				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
 			}
 			else if (chtype == CHAR_GREATER || chtype == CHAR_LESSER || chtype == CHAR_PIPE)
 			{
 				if (tmp != NULL)
 				{
-					tmp_to_tokens(tk_list, tmp);
+					tmp_to_tokens(data, tmp, TOKEN);
 					ft_lstclear(&tmp, free);
 				}
-				if (chtype == CHAR_GREATER && cmd_line[i + 1] == CHAR_GREATER)
-					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i++]))));
-				if (chtype == CHAR_LESSER && cmd_line[i + 1] == CHAR_LESSER)
-					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i++]))));
-				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
-				tmp_to_tokens(tk_list, tmp);
+				if (chtype == CHAR_GREATER && data->inputString[i + 1] == CHAR_GREATER)
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i++]))));
+				if (chtype == CHAR_LESSER && data->inputString[i + 1] == CHAR_LESSER)
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i++]))));
+				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
+				tmp_to_tokens(data, tmp, chtype);
 				ft_lstclear(&tmp, free);
 			}
-			else if (chtype == CHAR_WHITESPACE || chtype == CHAR_NULL)
+			else if (chtype == CHAR_WHITESPACE || chtype == CHAR_TAB || chtype == CHAR_NULL)
 			{
-				tmp_to_tokens(tk_list, tmp);
+				tmp_to_tokens(data, tmp, TOKEN);
 				ft_lstclear(&tmp, free);
 			}
 		}
 		else if (state == STATE_IN_DQUOTE)
 		{
-			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
-			if (cmd_line[i] == CHAR_DQUOTE)
+			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
+			if (data->inputString[i] == CHAR_DQUOTE)
 				state = STATE_GENERAL;
-			else if (cmd_line[i] == CHAR_NULL)
+			else if (data->inputString[i] == CHAR_NULL)
 			{
-				tmp_to_tokens(tk_list, tmp);
+				tmp_to_tokens(data, tmp, TOKEN);
 				ft_lstclear(&tmp, free);
 			}
 		}
 		else if (state == STATE_IN_QUOTE)
 		{
-			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(cmd_line[i]))));
-			if (cmd_line[i] == CHAR_QOUTE)
+			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
+			if (data->inputString[i] == CHAR_QOUTE)
 				state = STATE_GENERAL;
-			else if (cmd_line[i] == CHAR_NULL)
+			else if (data->inputString[i] == CHAR_NULL)
 			{
-				tmp_to_tokens(tk_list, tmp);
+				tmp_to_tokens(data, tmp, TOKEN);
 				ft_lstclear(&tmp, free);
 			}
 		}
-		if (cmd_line[i] == CHAR_NULL)
+		if (data->inputString[i] == CHAR_NULL)
 			break ;
 		i++;
 	}
 }
-
-// void	tokenize2(char *cmd_line, t_list **tk_list)
-// {
-// 	// char	*str;
-// 	// char	*src;
-// 	// t_list	*tk_node;
-// 	t_list	*tmp;
-//
-// 	tmp = NULL;
-// 	if (*cmd_line == '\0')
-// 		return ;
-// 	// src = cmd_line;
-// 	// str = ft_strdup("");
-// 	while (*cmd_line != '\0')
-// 	{
-// 		if (ft_isalnum(*cmd_line) || *cmd_line == '-' || *cmd_line == '_' || ft_isfilename(*cmd_line))
-// 		{
-// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-// 		}
-// 		else if (*cmd_line == '<')
-// 		{
-// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-// 			tmp_to_tokens(tk_list, tmp);
-// 			ft_lstclear(&tmp, free);
-// 			cmd_line++;
-// 			continue;
-// 		}
-// 		else if (*cmd_line == '>')
-// 		{
-// 			ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(*cmd_line))));
-// 			tmp_to_tokens(tk_list, tmp);
-// 			ft_lstclear(&tmp, free);
-// 			cmd_line++;
-// 			continue;
-// 		}
-// 		cmd_line++;
-// 		if (*cmd_line == ' ' || *cmd_line == '\0' || *cmd_line == '>' || *cmd_line == '<')
-// 		{
-// 			tmp_to_tokens(tk_list, tmp);
-// 			ft_lstclear(&tmp, free);
-// 		}
-// 	}
-// }
