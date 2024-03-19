@@ -6,66 +6,122 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/18 13:50:47 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 21:16:40 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_ASTNode	*simplecmd1(t_list **cur_token);
-t_ASTNode	*tokenlist(t_list **cur_token);
-t_ASTNode	*tokenlist1(t_list **cur_token);
-t_ASTNode	*tokenlist2(t_list **cur_token);
+t_ast	*simplecmd1(t_data *data);
+t_ast	*tokenlist(t_data *data);
+t_ast	*tokenlist1(t_data *data);
+t_ast	*tokenlist2(t_data *data);
 
-t_ASTNode	*simplecmd(t_list **cur_token)
+bool	term(t_data *data, int tokentype, char **buffer)
 {
-	t_list *tmp;
+	t_token	*token;
 
-	tmp = *cur_token;
-	return (simplecmd1(cur_token));
+	// (void)buffer;
+	if (data->cur_token == NULL)
+		return (false);
+	token = (t_token *)data->cur_token->content;
+	// printf("HERE: %s\n", token->data);
+	// printf("HERE: %d\n", token->type);
+	// printf("HERE: %d\n", tokentype);
+	if (token->type == tokentype)
+	{
+		if (buffer != NULL)
+		{
+			*buffer = malloc(ft_strlen(token->data) + 1);
+			ft_strlcpy(*buffer, token->data, ft_strlen(token->data) + 1);
+		}
+		data->cur_token = data->cur_token->next;
+		return (true);
+	}
+	data->cur_token = data->cur_token->next;
+	return (false);
 }
 
-t_ASTNode	*simplecmd1(t_list **cur_token)
+t_ast	*simplecmd(t_data *data)
 {
-	t_ASTNode	*tokenListNode;
-	t_ASTNode	*result;
+	// t_list *tmp;
+	//
+	// tmp = data->cur_token;
+	return (simplecmd1(data));
+}
+
+t_ast	*simplecmd1(t_data *data)
+{
+	t_ast	*tokenListNode;
+	t_ast	*result;
 	char		*pathname;
 
-	tokenListNode = tokenlist(cur_token);
+	// printf("1\n");
+	if (!term(data, TOKEN, &pathname))
+		return (NULL);
+	tokenListNode = tokenlist(data);
+	result = malloc(sizeof(t_ast));
+	astNodeSetType(result, NODE_CMDPATH);
+	astNodeSetData(result, pathname);
+	astAttachBinaryBranch(result, NULL, tokenListNode);
+	return (result);
 }
 
-t_ASTNode	*tokenlist(t_list **cur_token)
+t_ast	*tokenlist(t_data *data)
 {
 	t_list	*tmp;
-	t_ASTNode	*node;
+	t_ast	*node;
 
-	tmp = *cur_token;
+	tmp = data->cur_token;
 
-	*cur_token = tmp;
-	node = tokenlist1(cur_token);
+	data->cur_token = tmp;
+	node = tokenlist1(data);
 	if (node != NULL)
 		return (node);
-	*cur_token = tmp;
-	node = tokenlist2(cur_token);
+	data->cur_token = tmp;
+	node = tokenlist2(data);
 	if (node != NULL)
 		return (node);
 	return (NULL);
 }
 
-t_ASTNode	*tokenlist1(t_list **cur_token)
+t_ast	*tokenlist1(t_data *data)
 {
-	t_ASTNode	*tokenListNode;
-	t_ASTNode	*result;
+	t_ast	*tokenListNode;
+	t_ast	*result;
 	char		*arg;
+
+	if (!term(data, TOKEN, &arg))
+		return (NULL);
+	tokenListNode = tokenlist(data);
+	result = malloc(sizeof(t_ast));
+	astNodeSetType(result, NODE_ARGUMENT);
+	astNodeSetData(result, arg);
+	astAttachBinaryBranch(result, NULL, tokenListNode);
+	return (result);
 }
 
-int	parse(t_list *token_list, t_ASTNode **syntax_tree)
+t_ast	*tokenlist2(t_data *data)
 {
-	t_list *cur_token;
+	(void)data;
+	return (NULL);
+}
 
-	cur_token = NULL;
-	if (token_list == NULL)
+int	parse(t_data *data)
+{
+	t_token	*token;
+
+	if (data->tk_list == NULL)
 		return (-1);
-	cur_token = token_list;
-	*syntax_tree = simplecmd(&cur_token);
+	data->cur_token = data->tk_list;
+	data->ast = simplecmd(data);
+	// printf("2\n");
+	if (data->cur_token != NULL)
+		token = data->cur_token->content;
+	if (data->cur_token != NULL && token->type != 0)
+	{
+		printf("Syntax Error near: %s\n", token->data);
+		return (-1);
+	}
+	return (0);
 }

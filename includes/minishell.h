@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 19:16:38 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/19 20:00:46 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #define MAXCOM 1000
 #define MAXLIST 100
@@ -70,18 +71,20 @@ typedef enum
     NODE_DATA 			= (1 << 7),
 }	NodeType;
 
-typedef struct s_ASTNode
+typedef struct s_ast
 {
 	int				type;
 	char			*data;
-	struct s_ASTNode	*left;
-	struct s_ASTNode	*right;
-}	t_ASTNode;
+	struct s_ast	*left;
+	struct s_ast	*right;
+}	t_ast;
 
 typedef struct s_data
 {
 	char	*inputString;
 	t_list	*tk_list;
+	t_list	*cur_token;
+	t_ast	*ast;
 }	t_data;
 
 void	ignore_control_key();
@@ -89,10 +92,11 @@ void	printDir();
 int		takeInput(t_data *data);
 // void	tokenize(char *cmd_line, t_list **tk_list);
 void	tokenize(t_data *data);
-int		parse(t_list *token_list, t_ASTNode **syntax_tree);
-void	ASTattachBinaryBranch(t_ASTNode *root, t_ASTNode *leftNode, t_ASTNode *rightNode);
-void	ASTnodeSetType(t_ASTNode *node, NodeType nodetype);
-void	ASTnodeSetData(t_ASTNode *node, char *data);
-void	ASTnodeDelete(t_ASTNode *node);
+// int		parse(t_list *token_list, t_ast **syntax_tree);
+int		parse(t_data *data);
+void	astAttachBinaryBranch(t_ast *root, t_ast *leftNode, t_ast *rightNode);
+void	astNodeSetType(t_ast *node, NodeType nodetype);
+void	astNodeSetData(t_ast *node, char *data);
+void	astNodeDelete(t_ast *node);
 
 #endif // !MINISHELL_H

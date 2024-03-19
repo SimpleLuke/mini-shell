@@ -4,7 +4,9 @@ CC = cc
 CFLAG = -Wall -Werror -Wextra -g3
 SRC = src/main.c \
 	  src/interactive.c \
-	  src/token.c
+	  src/token.c \
+	  src/ast.c \
+	  src/parse.c
 OBJ = $(SRC:src/%c=$(BIN)/%o)
 INCS = ./includes
 LIBFT_PATH = libft
