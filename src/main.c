@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 21:34:44 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/20 16:07:01 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,6 @@ void	print_node(t_list *tk_list)
 	}
 }
 
-// void	print_tree(t_ast *ast)
-// {
-// 	printf("TREE\n");
-// 	printf("Type: %d\n", ast->type);
-// 	printf("Data: %s\n", ast->data);
-// 	if (ast->left != NULL)
-// 	{
-// 		printf("left Type: %d\n", ast->left->type);
-// 		printf("left Data: %s\n", ast->left->data);
-// 	}
-// 	if (ast->right != NULL)
-// 	{
-// 		printf("right Type: %d\n", ast->right->type);
-// 		printf("right Data: %s\n", ast->right->data);
-// 	}
-// 	if (ast->right->right != NULL)
-// 	{
-// 		printf("right right Type: %d\n", ast->right->right->type);
-// 		printf("right right Data: %s\n", ast->right->right->data);
-// 	}
-// }
 void printTreeUtil(t_ast* root, int depth) {
     if (root == NULL) {
         return;

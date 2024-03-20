@@ -6,9 +6,22 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 23:15:42 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/20 12:19:20 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+	//
+	// <job>			::=		<command> '|' <job>
+	// 					|	<command>
+	//
+	// <command>		::=		<simple command> '<' <filename> 
+	// 					|	<simple command> '>' <filename>
+	// 					|	<simple command>
+	//
+	// <simple command>::=		<pathname> <token list>
+	//
+	// <token list>	::=		<token> <token list>
+	// 					|	(EMPTY)
+	//
 
 #include "../includes/minishell.h"
 
