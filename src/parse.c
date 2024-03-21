@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/21 17:41:29 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/21 17:51:51 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 	//
@@ -135,31 +135,31 @@ t_ast	*cmd(t_data *data)
 	printf("cmd\n");
 	tmp = data->cur_token;
 
-	data->cur_token = tmp;
-	// <simple command> '<' <filename> 
-	node = cmd1(data);
-	if (node != NULL)
-		return (node);
-	data->cur_token = tmp;
-	// <simple command> '>' <filename> 
-	node = cmd2(data);
-	if (node != NULL)
-		return (node);
-	data->cur_token = tmp;
-	// <simple command> '>>' <filename> 
-	node = cmd3(data);
-	if (node != NULL)
-		return (node);
-	data->cur_token = tmp;
-	// <simple command> '<<' <filename> 
-	node = cmd4(data);
-	if (node != NULL)
-		return (node);
-	data->cur_token = tmp;
-	// '>' <filename> <simple command>
-	node = cmd6(data);
-	if (node != NULL)
-		return (node);
+	// data->cur_token = tmp;
+	// // <simple command> '<' <filename> 
+	// node = cmd1(data);
+	// if (node != NULL)
+	// 	return (node);
+	// data->cur_token = tmp;
+	// // <simple command> '>' <filename> 
+	// node = cmd2(data);
+	// if (node != NULL)
+	// 	return (node);
+	// data->cur_token = tmp;
+	// // <simple command> '>>' <filename> 
+	// node = cmd3(data);
+	// if (node != NULL)
+	// 	return (node);
+	// data->cur_token = tmp;
+	// // <simple command> '<<' <filename> 
+	// node = cmd4(data);
+	// if (node != NULL)
+	// 	return (node);
+	// data->cur_token = tmp;
+	// // '>' <filename> <simple command>
+	// node = cmd6(data);
+	// if (node != NULL)
+	// 	return (node);
 	data->cur_token = tmp;
 	// <simple command>
 	node = cmd5(data);
@@ -543,9 +543,9 @@ void	store_redirection(t_data *data)
 	data->tk_list = new;
 	print_node(data->tk_list);
 	printf("child: %d type:%d name:%s\n",data->io.infile_list[0].idx, data->io.infile_list[0].type, data->io.infile_list[0].name);
-	printf("child: %d type:%d name:%s\n",data->io.infile_list[1].idx, data->io.infile_list[0].type, data->io.infile_list[0].name);
+	printf("child: %d type:%d name:%s\n",data->io.infile_list[1].idx, data->io.infile_list[1].type, data->io.infile_list[1].name);
 	printf("child: %d type:%d name:%s\n",data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
-	printf("child: %d type:%d name:%s\n",data->io.outfile_list[1].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
+	printf("child: %d type:%d name:%s\n",data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
 }
 
 int	parse(t_data *data)
