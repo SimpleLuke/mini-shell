@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/21 17:51:51 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/21 18:21:08 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 	//
@@ -495,7 +495,7 @@ t_list	*clear_redirection(t_data *data)
 	while (data->tk_list)
 	{
 		token = data->tk_list->content;
-		printf("CONTENT: %s\n", token->data);
+		// printf("CONTENT: %s\n", token->data);
 		if (token->type == CHAR_GREATER || token->type == CHAR_APPEND || token->type == CHAR_LESSER || token->type == CHAR_HEREDOC)
 		{
 			data->tk_list = data->tk_list->next;
@@ -507,15 +507,15 @@ t_list	*clear_redirection(t_data *data)
 			{
 				new = data->tk_list;
 				new_head = new;
-				token = new->content;
-				printf("IN: %s\n", token->data);
+				// token = new->content;
+				// printf("IN: %s\n", token->data);
 			}
 			else
 			{
 				new->next = data->tk_list;
 				new = new->next;
-				token = new->content;
-				printf("IN: %s\n", token->data);
+				// token = new->content;
+				// printf("IN: %s\n", token->data);
 			}
 		}
 		data->tk_list = data->tk_list->next;
@@ -542,10 +542,37 @@ void	store_redirection(t_data *data)
 	ft_lstclear(&(data->tk_list), free);
 	data->tk_list = new;
 	print_node(data->tk_list);
-	printf("child: %d type:%d name:%s\n",data->io.infile_list[0].idx, data->io.infile_list[0].type, data->io.infile_list[0].name);
-	printf("child: %d type:%d name:%s\n",data->io.infile_list[1].idx, data->io.infile_list[1].type, data->io.infile_list[1].name);
-	printf("child: %d type:%d name:%s\n",data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
-	printf("child: %d type:%d name:%s\n",data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
+	// printf("child: %d type:%d name:%s\n",data->io.infile_list[0].idx, data->io.infile_list[0].type, data->io.infile_list[0].name);
+	// printf("child: %d type:%d name:%s\n",data->io.infile_list[1].idx, data->io.infile_list[1].type, data->io.infile_list[1].name);
+	// printf("child: %d type:%d name:%s\n",data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
+	// printf("child: %d type:%d name:%s\n",data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
+}
+
+int	check_unclosed(t_list *tk_list)
+{
+	t_token	*token;
+	int		i;
+
+	i = 0;
+	if (tk_list == NULL)
+		return (0);
+	while (tk_list)
+	{
+		token = tk_list->content;
+		if (token->data[0] == '\"' && token->data[ft_strlen(token->data) - 1] != '\"')
+		{
+			printf("Syntax Error : unclosed double quote\n");
+			return (-1);
+		}
+		if (token->data[0] == '\'' && token->data[ft_strlen(token->data) - 1] != '\'')
+		{
+			printf("Syntax Error : unclosed quote\n");
+			return (-1);
+		}
+		tk_list = tk_list->next;
+	}
+	return (0);
+
 }
 
 int	parse(t_data *data)
@@ -553,6 +580,8 @@ int	parse(t_data *data)
 	t_token	*token;
 
 	if (data->tk_list == NULL)
+		return (-1);
+	if (check_unclosed(data->tk_list))
 		return (-1);
 	store_redirection(data);
 	data->cur_token = data->tk_list;
@@ -567,5 +596,6 @@ int	parse(t_data *data)
 		printf("Syntax Error near: %s\n", token->data);
 		return (-1);
 	}
+
 	return (0);
 }
