@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/21 22:21:46 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/21 22:43:28 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 	//
@@ -412,6 +412,24 @@ int	count_type(int type, t_list *tk_list)
 	return (count);
 }
 
+int	count_type_in_token(int type, char *data)
+{
+	int		count;
+	int		i;
+
+	i = 0;
+	count = 0;
+	if (data == NULL)
+		return (count);
+	while (data[i])
+	{
+		if (data[i] == type)
+			count++;
+		i++;
+	}
+	return (count);
+}
+
 void	init_io(t_data *data)
 {
 	data->io.out_size = count_type(CHAR_GREATER, data->tk_list) + count_type(CHAR_APPEND, data->tk_list);
@@ -569,19 +587,29 @@ int	check_unclosed(t_list *tk_list)
 			printf("Syntax Error : unclosed quote\n");
 			return (-1);
 		}
+		if (!(token->data[0] == '\'' && token->data[ft_strlen(token->data) - 1] == '\'') && count_type_in_token(CHAR_DQUOTE, token->data) % 2)
+		{
+			printf("Syntax Error : unclosed quote\n");
+			return (-1);
+		}
+		if (!(token->data[0] == '\"' && token->data[ft_strlen(token->data) - 1] == '\"') && count_type_in_token(CHAR_DQUOTE, token->data) % 2)
+		{
+			printf("Syntax Error : unclosed quote\n");
+			return (-1);
+		}
 		tk_list = tk_list->next;
 	}
 	return (0);
 }
 
-int	check_doulbe_redirection(t_list *tk_list)
+int	check_doulbe_operation(t_list *tk_list)
 {
 	t_token	*cur_token;
 	t_token	*next_token;
 
 	if (tk_list == NULL)
 		return (0);
-	while (tk_list)
+	while (tk_list->next)
 	{
 		cur_token = tk_list->content;
 		next_token = tk_list->next->content;
@@ -601,7 +629,7 @@ int	parse(t_data *data)
 
 	if (data->tk_list == NULL)
 		return (-1);
-	if (check_doulbe_redirection(data->tk_list))
+	if (check_doulbe_operation(data->tk_list))
 		return (-1);
 	if (check_unclosed(data->tk_list))
 		return (-1);
