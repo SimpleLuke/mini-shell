@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 23:05:56 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/21 17:33:17 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ enum TokenType{
 	CHAR_TAB = '\t',
 	CHAR_NEWLINE = '\n',
 	CHAR_GREATER = '>',
+	CHAR_APPEND = 1,
+	CHAR_HEREDOC = 2,
 	CHAR_LESSER = '<',
 	CHAR_NULL = 0,
 	
@@ -53,11 +55,28 @@ typedef struct s_token
 	char	*data;
 }	t_token;
 
-// typedef struct s_tk_node{
-// 	char				*token;
-// 	struct s_tk_node	*next;
-// } t_tk_node;
-//
+typedef struct s_infile
+{
+	int		idx;
+	int		type;
+	char	*name;
+}	t_infile;
+
+typedef struct s_outfile
+{
+	int		idx;
+	int		type;
+	char	*name;
+}	t_outfile;
+
+typedef struct s_io
+{
+	int			in_size;
+	int			out_size;
+	t_infile	*infile_list;
+	t_outfile	*outfile_list;
+}	t_io;
+
 typedef enum
 {
 	NODE_PIPE = (1 << 0),
@@ -66,9 +85,11 @@ typedef enum
     NODE_REDIRECT_IN 	= (1 << 3),
     NODE_REDIRECT_OUT 	= (1 << 4),
     NODE_CMDPATH		= (1 << 5),
-    NODE_ARGUMENT		= (1 << 6),
+    NODE_ARGUMENT		= (-1 << 6),
+    NODE_REDIRECT_APPREND 	= (1 << 7),
+    NODE_REDIRECT_HEREDOC 	= (1 << 8),
 
-    NODE_DATA 			= (1 << 7),
+    NODE_DATA 			= (1 << 9),
 }	NodeType;
 
 typedef struct s_ast
@@ -83,12 +104,12 @@ typedef struct s_data
 {
 	char	*inputString;
 	t_list	*tk_list;
+	t_io	io;
 	t_list	*cur_token;
 	t_ast	*ast;
 }	t_data;
 
 void	ignore_control_key();
-void	printDir();
 int		takeInput(t_data *data);
 // void	tokenize(char *cmd_line, t_list **tk_list);
 void	tokenize(t_data *data);
@@ -101,5 +122,7 @@ void	astNodeDelete(t_ast *node);
 
 
 void printTree(t_ast* root);
+void	printDir();
+void	print_node(t_list *tk_list);
 
 #endif // !MINISHELL_H

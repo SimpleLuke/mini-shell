@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/03/19 19:21:41 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/20 17:28:32 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,24 @@ void	tokenize(t_data *data)
 					ft_lstclear(&tmp, free);
 				}
 				if (chtype == CHAR_GREATER && data->inputString[i + 1] == CHAR_GREATER)
-					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i++]))));
+				{
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[++i]))));
+					tmp_to_tokens(data, tmp, CHAR_APPEND);
+					ft_lstclear(&tmp, free);
+					i++;
+					continue;
+				}
 				if (chtype == CHAR_LESSER && data->inputString[i + 1] == CHAR_LESSER)
-					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i++]))));
+				{
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
+					ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[++i]))));
+					tmp_to_tokens(data, tmp, CHAR_HEREDOC);
+					ft_lstclear(&tmp, free);
+					i++;
+					continue;
+
+				}
 				ft_lstadd_back(&tmp, ft_lstnew(ft_strdup(&(data->inputString[i]))));
 				tmp_to_tokens(data, tmp, chtype);
 				ft_lstclear(&tmp, free);
