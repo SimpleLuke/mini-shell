@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 19:13:21 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 19:15:16 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,4 +21,11 @@ void	pwd(void)
 		printf("%s\n", cwd);
 	else
 		perror("getcwd() error");
+}
+
+void	echo(bool newline, char *str)
+{
+	printf("%s", str);
+	if (newline)
+		printf("\n");
 }
