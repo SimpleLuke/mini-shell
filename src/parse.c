@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/21 22:43:28 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 17:53:38 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 	//
@@ -107,18 +107,18 @@ t_ast	*job1(t_data *data)
 		return (NULL);
 	if (!term(data, CHAR_PIPE, NULL))
 	{
-		astNodeDelete(cmdNode);
+		ast_node_delete(cmdNode);
 		return (NULL);
 	}
 	jobNode = job(data);
 	if (jobNode == NULL)
 	{
-		astNodeDelete(jobNode);
+		ast_node_delete(jobNode);
 		return (NULL);
 	}
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_PIPE);
-	astAttachBinaryBranch(result, cmdNode, jobNode);
+	ast_node_set_type(result, NODE_PIPE);
+	ast_attach_binary_branch(result, cmdNode, jobNode);
 	return (result);
 }
 
@@ -180,19 +180,19 @@ t_ast	*cmd1(t_data *data)
 		return (NULL);
 	if (!term(data, CHAR_LESSER, NULL))
 	{
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	if (!term(data, TOKEN, &filename))
 	{
 		free(filename);
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_REDIRECT_IN);
-	astNodeSetData(result, filename);
-	astAttachBinaryBranch(result, NULL, simplecmdNode);
+	ast_node_set_type(result, NODE_REDIRECT_IN);
+	ast_node_set_data(result, filename);
+	ast_attach_binary_branch(result, NULL, simplecmdNode);
 	return (result);
 }
 
@@ -209,20 +209,20 @@ t_ast	*cmd2(t_data *data)
 	if (!term(data, CHAR_GREATER, NULL))
 	{
 		// printf("1\n");
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	if (!term(data, TOKEN, &filename))
 	{
 		// printf("2\n");
 		free(filename);
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_REDIRECT_OUT);
-	astNodeSetData(result, filename);
-	astAttachBinaryBranch(result, NULL, simplecmdNode);
+	ast_node_set_type(result, NODE_REDIRECT_OUT);
+	ast_node_set_data(result, filename);
+	ast_attach_binary_branch(result, NULL, simplecmdNode);
 	// printTree(data->ast);
 	return (result);
 }
@@ -240,20 +240,20 @@ t_ast	*cmd3(t_data *data)
 	if (!term(data, CHAR_APPEND, NULL))
 	{
 		// printf("1\n");
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	if (!term(data, TOKEN, &filename))
 	{
 		// printf("2\n");
 		free(filename);
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_REDIRECT_APPREND);
-	astNodeSetData(result, filename);
-	astAttachBinaryBranch(result, NULL, simplecmdNode);
+	ast_node_set_type(result, NODE_REDIRECT_APPREND);
+	ast_node_set_data(result, filename);
+	ast_attach_binary_branch(result, NULL, simplecmdNode);
 	// printTree(data->ast);
 	return (result);
 }
@@ -271,20 +271,20 @@ t_ast	*cmd4(t_data *data)
 	if (!term(data, CHAR_HEREDOC, NULL))
 	{
 		// printf("1\n");
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	if (!term(data, TOKEN, &filename))
 	{
 		// printf("2\n");
 		free(filename);
-		astNodeDelete(simplecmdNode);
+		ast_node_delete(simplecmdNode);
 		return (NULL);
 	}
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_REDIRECT_HEREDOC);
-	astNodeSetData(result, filename);
-	astAttachBinaryBranch(result, NULL, simplecmdNode);
+	ast_node_set_type(result, NODE_REDIRECT_HEREDOC);
+	ast_node_set_data(result, filename);
+	ast_attach_binary_branch(result, NULL, simplecmdNode);
 	// printTree(data->ast);
 	return (result);
 }
@@ -311,9 +311,9 @@ t_ast	*cmd6(t_data *data)
 	if (simplecmdNode == NULL)
 		return (NULL);
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_REDIRECT_OUT);
-	astNodeSetData(result, filename);
-	astAttachBinaryBranch(result, NULL, simplecmdNode);
+	ast_node_set_type(result, NODE_REDIRECT_OUT);
+	ast_node_set_data(result, filename);
+	ast_attach_binary_branch(result, NULL, simplecmdNode);
 	return (result);
 }
 
@@ -343,9 +343,9 @@ t_ast	*simplecmd1(t_data *data)
 	// <pathname> <token list>
 	tokenListNode = tokenlist(data);
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_CMDPATH);
-	astNodeSetData(result, pathname);
-	astAttachBinaryBranch(result, NULL, tokenListNode);
+	ast_node_set_type(result, NODE_CMDPATH);
+	ast_node_set_data(result, pathname);
+	ast_attach_binary_branch(result, NULL, tokenListNode);
 	return (result);
 }
 
@@ -381,9 +381,9 @@ t_ast	*tokenlist1(t_data *data)
 		return (NULL);
 	tokenListNode = tokenlist(data);
 	result = malloc(sizeof(t_ast));
-	astNodeSetType(result, NODE_ARGUMENT);
-	astNodeSetData(result, arg);
-	astAttachBinaryBranch(result, NULL, tokenListNode);
+	ast_node_set_type(result, NODE_ARGUMENT);
+	ast_node_set_data(result, arg);
+	ast_attach_binary_branch(result, NULL, tokenListNode);
 	return (result);
 }
 
@@ -559,7 +559,7 @@ void	store_redirection(t_data *data)
 	new = clear_redirection(data);
 	ft_lstclear(&(data->tk_list), free);
 	data->tk_list = new;
-	print_node(data->tk_list);
+	// print_node(data->tk_list);
 	// printf("child: %d type:%d name:%s\n",data->io.infile_list[0].idx, data->io.infile_list[0].type, data->io.infile_list[0].name);
 	// printf("child: %d type:%d name:%s\n",data->io.infile_list[1].idx, data->io.infile_list[1].type, data->io.infile_list[1].name);
 	// printf("child: %d type:%d name:%s\n",data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);

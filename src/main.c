@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/21 15:35:06 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 16:48:31 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void printTree(t_ast* root) {
 
 void	init_data(t_data *data)
 {
-	data->inputString = NULL;
+	data->input_string = NULL;
 	data->tk_list = NULL;
 	data->ast = NULL;
 	data->cur_token = NULL;
@@ -80,7 +80,7 @@ int main()
 		// parse(tk_list, &exectree);
 		parse(&data);
 		printTree(data.ast);
-		astNodeDelete(data.ast);
+		ast_node_delete(data.ast);
 		ft_lstclear(&(data.tk_list), free);
 		// printf("%s\n", (char *)tk_list->content);
 

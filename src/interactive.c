@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/03/20 12:17:03 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 16:43:21 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ int	takeInput(t_data *data)
 	else if (ft_strlen(buf) != 0)
 	{
 		add_history(buf);
-		data->inputString = malloc(ft_strlen(buf) * sizeof(char) + 1);
-		ft_strlcpy(data->inputString, buf, ft_strlen(buf) + 1);
+		data->input_string = malloc(ft_strlen(buf) * sizeof(char) + 1);
+		ft_strlcpy(data->input_string, buf, ft_strlen(buf) + 1);
 		// printf("LEN: %d\n", (int)ft_strlen(buf));
 		// printf("BUF: %s\n", buf);
 		// printf("SIZE BUF: %zu\n", sizeof(buf));
