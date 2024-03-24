@@ -6,7 +6,8 @@ SRC = src/main.c \
 	  src/interactive.c \
 	  src/token.c \
 	  src/ast.c \
-	  src/parse.c
+	  src/parse.c \
+	  src/builtins.c
 OBJ = $(SRC:src/%c=$(BIN)/%o)
 INCS = ./includes
 LIBFT_PATH = libft
