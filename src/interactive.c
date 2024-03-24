@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 16:43:21 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 18:35:11 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,21 @@
 #include <readline/readline.h>
 
 // Function to print Current Directory
-void	printDir()
+void	print_dir(void)
 {
 	char	cwd[1024];
+
 	getcwd(cwd, sizeof(cwd));
 	printf("llai:%s", cwd);
 }
 
 // Function to take input
-int	takeInput(t_data *data)
+int	take_input(t_data *data)
 {
 	char	*buf;
 
 	rl_catch_signals = 0;
 	buf = readline("minishell$ ");
-	// printf("%s\n", buf);
 	if (!buf)
 	{
 		printf("exit\n");
@@ -39,11 +39,6 @@ int	takeInput(t_data *data)
 		add_history(buf);
 		data->input_string = malloc(ft_strlen(buf) * sizeof(char) + 1);
 		ft_strlcpy(data->input_string, buf, ft_strlen(buf) + 1);
-		// printf("LEN: %d\n", (int)ft_strlen(buf));
-		// printf("BUF: %s\n", buf);
-		// printf("SIZE BUF: %zu\n", sizeof(buf));
-		// printf("SIZE STR: %zu\n", sizeof(str));
-		// printf("HERE: %s\n", *str);
 		free(buf);
 		return (0);
 	}
@@ -52,7 +47,7 @@ int	takeInput(t_data *data)
 		printf("Exit");
 		exit(0);
 	}
-	else	
+	else
 		return (1);
 }
 
@@ -61,12 +56,11 @@ void	signint_handler(int signum)
 	(void) signum;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
-	// printDir();
 	rl_on_new_line();
 	rl_redisplay();
 }
 
-void	ignore_control_key()
+void	ignore_control_key(void)
 {
 	signal(SIGINT, signint_handler);
 	signal(SIGTSTP, SIG_IGN);

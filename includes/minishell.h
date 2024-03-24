@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 17:56:08 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 18:35:51 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ typedef struct s_data
 }	t_data;
 
 void	ignore_control_key(void);
-int		takeInput(t_data *data);
+int		take_input(t_data *data);
 // void	tokenize(char *cmd_line, t_list **tk_list);
 void	tokenize(t_data *data);
 // int		parse(t_list *token_list, t_ast **syntax_tree);

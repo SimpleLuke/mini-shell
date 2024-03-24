@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 16:48:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/24 18:39:56 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,31 +25,29 @@ void	print_node(t_list *tk_list)
 	}
 }
 
-void printTreeUtil(t_ast* root, int depth) {
-    if (root == NULL) {
-        return;
-    }
-
-    // Print the current node
-    printf("%*sType: %d, Data: %s\n", depth * 4, "", root->type, root->data);
-
-    // Print the left subtree
-    printf("%*s\\--Left:\n", depth * 4, "");
-    printTreeUtil(root->left, depth + 1);
-
-    // Print the right subtree
-    printf("%*s\\--Right:\n", depth * 4, "");
-    printTreeUtil(root->right, depth + 1);
+void	print_tree_util(t_ast *root, int depth)
+{
+	if (root == NULL)
+		return ;
+	// Print the current node
+	printf("%*sType: %d, Data: %s\n", depth * 4, "", root->type, root->data);
+	// Print the left subtree
+	printf("%*s\\--Left:\n", depth * 4, "");
+	print_tree_util(root->left, depth + 1);
+	// Print the right subtree
+	printf("%*s\\--Right:\n", depth * 4, "");
+	print_tree_util(root->right, depth + 1);
 }
 
-void printTree(t_ast* root) {
-    if (root == NULL) {
-        printf("Tree is empty\n");
-        return;
-    }
-
-    printf("Root:\n");
-    printTreeUtil(root, 1);
+void	print_tree(t_ast *root)
+{
+	if (root == NULL)
+	{
+		printf("Tree is empty\n");
+		return ;
+	}
+	printf("Root:\n");
+	print_tree_util(root, 1);
 }
 
 void	init_data(t_data *data)
@@ -60,31 +58,22 @@ void	init_data(t_data *data)
 	data->cur_token = NULL;
 }
 
-int main()
+int	main(void)
 {
 	t_data	data;
-	// char	*inputString;
-	// t_list	*tk_list = NULL;
-	// t_ASTNode	*exectree;
 
 	init_data(&data);
 	ignore_control_key();
 	while (1)
 	{
-		// printDir();
-		if (takeInput(&data))
-			continue;
-		// printf("%s\n", inputString);
+		if (take_input(&data))
+			continue ;
 		tokenize(&data);
 		print_node(data.tk_list);
-		// parse(tk_list, &exectree);
 		parse(&data);
-		printTree(data.ast);
+		print_tree(data.ast);
 		ast_node_delete(data.ast);
 		ft_lstclear(&(data.tk_list), free);
-		// printf("%s\n", (char *)tk_list->content);
-
-		// ft_lstiter(tk_list, (void *)print_node);
 	}
 	return (0);
 }
