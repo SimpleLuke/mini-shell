@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 17:46:09 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 18:34:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,11 +132,13 @@ void	ast_node_delete(t_ast *node);
 void	printTree(t_ast *root);
 void	printDir(void);
 void	print_node(t_list *tk_list);
+char	**copy_string_list(char **list);
 
 // builtins.c
 void	pwd(void);
 void	echo(bool newline, char *str);
 int		cd(char *arg);
 void	env(char **envp);
+void	export_var(char *arg, char ***env_list);
 
 #endif // !MINISHELL_H

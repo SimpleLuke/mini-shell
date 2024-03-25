@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 17:45:45 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 18:37:26 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,71 @@ int	cd(char *arg)
 	return (0);
 }
 
-void	env(char **envp)
+int		count_envlist(char **env_list)
 {
 	int	i;
 
 	i = 0;
-	while (envp[i] != NULL)
+	while (env_list[i] != NULL)
+		i++;
+	return (i);
+}
+
+char	**copy_string_list(char **list)
+{
+	char	**dst;
+	int		count;
+	int		i;
+
+	count = count_envlist(list);
+	dst = malloc((count + 1) * sizeof(char **));
+	i = 0;
+	while ((list)[i] != NULL)
 	{
-		printf("%s\n", envp[i]);
+		dst[i] = ft_strdup((list)[i]);
+		i++;
+	}
+	dst[i] = NULL;
+	return (dst);
+}
+
+void	export_var(char *arg, char ***env_list)
+{
+	char	**tmp;
+	int		count;
+	int		i;
+
+	count = count_envlist(*env_list);
+	tmp = malloc((count + 2) * sizeof(char **));
+	i = 0;
+	while ((*env_list)[i] != NULL)
+	{
+		tmp[i] = ft_strdup((*env_list)[i]);
+		i++;
+	}
+	if (ft_strchr(arg, '=') == NULL)
+	{
+		tmp[i] = ft_strdup(arg);
+	}
+	tmp[i + 1] = NULL;
+	i = 0;
+	while ((*env_list)[i] != NULL)
+	{
+		free((*env_list)[i]);
+		i++;
+	}
+	free(*env_list);
+	*env_list = tmp;
+}
+
+void	env(char **env_list)
+{
+	int	i;
+
+	i = 0;
+	while (env_list[i] != NULL)
+	{
+		printf("%s\n", env_list[i]);
 		i++;
 	}
 }

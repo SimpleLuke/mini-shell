@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 17:46:00 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 18:37:13 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,22 @@ void	init_data(t_data *data)
 int	main(int argc, char **argv, char **envp)
 {
 	t_data	data;
+	char	**env_list;
 
 	(void)argc;
 	(void)argv;
+	env_list = copy_string_list(envp);
 	init_data(&data);
 	ignore_control_key();
 	while (1)
 	{
-		env(envp);
+		env(env_list);
+		export_var("a", &env_list);
+		env(env_list);
 		pwd();
 		cd("..");
 		pwd();
-		cd("~");
-		pwd();
-		cd("-");
+		cd("pipex");
 		pwd();
 		if (take_input(&data))
 			continue ;
