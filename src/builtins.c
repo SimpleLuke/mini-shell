@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 17:40:30 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 17:45:45 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,16 @@ int	cd(char *arg)
 	}
 	ft_strlcpy(lastdir, curdir, ft_strlen(curdir) + 1);
 	return (0);
+}
+
+void	env(char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i] != NULL)
+	{
+		printf("%s\n", envp[i]);
+		i++;
+	}
 }
