@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 18:37:26 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 18:42:22 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ char	**copy_string_list(char **list)
 void	export_var(char *arg, char ***env_list)
 {
 	char	**tmp;
+	char	*value;
 	int		count;
 	int		i;
 
@@ -124,9 +125,12 @@ void	export_var(char *arg, char ***env_list)
 		tmp[i] = ft_strdup((*env_list)[i]);
 		i++;
 	}
-	if (ft_strchr(arg, '=') == NULL)
-	{
+	if (ft_strchr(arg, '='))
 		tmp[i] = ft_strdup(arg);
+	else
+	{
+		value = ft_strjoin(arg, "=");
+		tmp[i] = value;
 	}
 	tmp[i + 1] = NULL;
 	i = 0;
