@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 19:15:37 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/25 17:14:39 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,5 +136,6 @@ void	print_node(t_list *tk_list);
 // builtins.c
 void	pwd(void);
 void	echo(bool newline, char *str);
+int		cd(char *arg);
 
 #endif // !MINISHELL_H
