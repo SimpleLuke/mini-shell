@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 18:41:43 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/26 18:22:37 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ int	main(int argc, char **argv, char **envp)
 	{
 		env(env_list);
 		export_var("a", &env_list);
-		export_var("b=hello", &env_list);
+		env(env_list);
+		export_var("a=97", &env_list);
+		// export_var("b=hello", &env_list);
 		env(env_list);
 		pwd();
 		cd("..");

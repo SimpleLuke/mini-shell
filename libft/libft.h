@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 19:15:44 by llai              #+#    #+#             */
-/*   Updated: 2024/03/13 16:23:01 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/26 18:03:13 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,5 +157,6 @@ char		*ft_strjoin_gnl(char *s1, const char *s2, size_t len);
 void		ft_free(void **ptr);
 void		ft_lstdelone1(t_list *lst, void (*del)(void **));
 void		ft_lstclear2(t_list **lst, void (*del)(void **));
+void		ft_free_strarr(char ***arr);
 
 #endif

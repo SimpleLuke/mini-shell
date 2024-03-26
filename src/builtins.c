@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 18:42:22 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/26 18:25:25 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,29 +110,61 @@ char	**copy_string_list(char **list)
 	return (dst);
 }
 
+int	exist_var(char *arg, char *str, int *is_exist)
+{
+	char **arr;
+	char	**arg_arr;
+	char	*tmp;
+
+	arg_arr = NULL;
+	tmp = NULL;
+	*is_exist = 0;
+	arr = ft_split(str, '=');
+	if (ft_strchr(arg, '='))
+		arg_arr = ft_split(arg, '=');
+	if (arg_arr && !ft_strncmp(arg_arr[0], arr[0], ft_strlen(arr[0])))
+	{
+		*is_exist = 1;
+		ft_free_strarr(&arr);
+		ft_free_strarr(&arg_arr);
+		return (1);
+	}
+	ft_free_strarr(&arr);
+	return (0);
+}
+
 void	export_var(char *arg, char ***env_list)
 {
 	char	**tmp;
 	char	*value;
 	int		count;
 	int		i;
+	int		is_exist;
 
 	count = count_envlist(*env_list);
 	tmp = malloc((count + 2) * sizeof(char **));
 	i = 0;
 	while ((*env_list)[i] != NULL)
 	{
-		tmp[i] = ft_strdup((*env_list)[i]);
+		if (exist_var(arg, (*env_list)[i], &is_exist))
+			tmp[i] = ft_strdup(arg);
+		else
+			tmp[i] = ft_strdup((*env_list)[i]);
 		i++;
 	}
-	if (ft_strchr(arg, '='))
-		tmp[i] = ft_strdup(arg);
-	else
+	if (!is_exist)
 	{
-		value = ft_strjoin(arg, "=");
-		tmp[i] = value;
+		if (ft_strchr(arg, '='))
+			tmp[i] = ft_strdup(arg);
+		else
+		{
+			value = ft_strjoin(arg, "=");
+			tmp[i] = value;
+		}
+		tmp[i + 1] = NULL;
 	}
-	tmp[i + 1] = NULL;
+	else
+		tmp[i] = NULL;
 	i = 0;
 	while ((*env_list)[i] != NULL)
 	{
@@ -154,3 +186,8 @@ void	env(char **env_list)
 		i++;
 	}
 }
+//
+// void	unset_env(char *arg, char **env_list)
+// {
+//
+// }
