@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/26 18:25:25 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/26 18:56:41 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,12 @@ int	exist_var(char *arg, char *str, int *is_exist)
 	arr = ft_split(str, '=');
 	if (ft_strchr(arg, '='))
 		arg_arr = ft_split(arg, '=');
-	if (arg_arr && !ft_strncmp(arg_arr[0], arr[0], ft_strlen(arr[0])))
+	else
+	{
+		arg_arr = malloc(sizeof(char **));
+		arg_arr[0] = ft_strdup(arg);
+	}
+	if (arg_arr && !ft_strncmp(arg_arr[-1], arr[0], ft_strlen(arr[0])))
 	{
 		*is_exist = 1;
 		ft_free_strarr(&arr);
@@ -186,8 +191,35 @@ void	env(char **env_list)
 		i++;
 	}
 }
-//
-// void	unset_env(char *arg, char **env_list)
-// {
-//
-// }
+
+void	unset_env(char *arg, char ***env_list)
+{
+	int	i;
+	int	j;
+	int	count;
+	int	is_exist;
+	char	**tmp;
+
+	i = 0;
+	j = 0;
+	count = count_envlist(*env_list);
+	tmp = malloc((count + 2) * sizeof(char **));
+	while ((*env_list)[i] != NULL)
+	{
+		if (!exist_var(arg, (*env_list)[i], &is_exist))
+		{
+			tmp[j] = ft_strdup((*env_list)[i]);
+			j++;
+		}
+		i++;
+	}
+	tmp[j] = NULL;
+	i = 0;
+	while ((*env_list)[i] != NULL)
+	{
+		free((*env_list)[i]);
+		i++;
+	}
+	free(*env_list);
+	*env_list = tmp;
+}

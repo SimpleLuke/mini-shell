@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/25 18:34:30 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/26 18:49:32 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,5 +140,6 @@ void	echo(bool newline, char *str);
 int		cd(char *arg);
 void	env(char **envp);
 void	export_var(char *arg, char ***env_list);
+void	unset_env(char *arg, char ***env_list);
 
 #endif // !MINISHELL_H
