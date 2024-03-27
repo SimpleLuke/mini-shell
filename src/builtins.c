@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 14:20:50 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 19:32:52 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	exist_var(char *arg, char *str, int *is_exist)
 		arg_arr = malloc(sizeof(char **));
 		arg_arr[0] = ft_strdup(arg);
 	}
-	if (arg_arr && !ft_strncmp(arg_arr[-1], arr[0], ft_strlen(arr[0])))
+	if (arg_arr && !ft_strncmp(arg_arr[0], arr[0], ft_strlen(arr[0])))
 	{
 		*is_exist = 1;
 		ft_free_strarr(&arr);

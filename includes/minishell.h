@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 14:20:59 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 18:55:52 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ typedef struct s_tokenizer
 typedef struct s_data
 {
 	char	*input_string;
+	char	**env_list;
 	t_list	*tk_list;
 	t_io	io;
 	t_list	*cur_token;
@@ -134,6 +135,10 @@ void	printDir(void);
 void	print_node(t_list *tk_list);
 char	**copy_string_list(char **list);
 
+// expander.c
+void	expand_quote(t_ast *ast);
+void	expand_dquote(t_ast *ast, t_data *data);
+
 // builtins.c
 void	pwd(void);
 void	echo(bool newline, char *str);
@@ -142,5 +147,7 @@ void	env(char **envp);
 void	export_var(char *arg, char ***env_list);
 void	unset_env(char *arg, char ***env_list);
 void	exit_shell(void);
+int		exist_var(char *arg, char *str, int *is_exist);
+char	*get_envvar(char *arg, t_data *data);
 
 #endif // !MINISHELL_H

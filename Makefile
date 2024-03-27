@@ -7,7 +7,8 @@ SRC = src/main.c \
 	  src/token.c \
 	  src/ast.c \
 	  src/parse.c \
-	  src/builtins.c
+	  src/builtins.c \
+	  src/expander.c
 OBJ = $(SRC:src/%c=$(BIN)/%o)
 INCS = ./includes
 LIBFT_PATH = libft

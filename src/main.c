@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 14:21:58 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 17:50:43 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ void	print_node(t_list *tk_list) { t_token	*data;
 
 void	print_tree_util(t_ast *root, int depth)
 {
-	if (root == NULL)
-		return ;
+	if (root == NULL) return ;
 	// Print the current node
 	printf("%*sType: %d, Data: %s\n", depth * 4, "", root->type, root->data);
 	// Print the left subtree
@@ -59,11 +58,11 @@ void	init_data(t_data *data)
 int	main(int argc, char **argv, char **envp)
 {
 	t_data	data;
-	char	**env_list;
+	// char	**env_list;
 
 	(void)argc;
 	(void)argv;
-	env_list = copy_string_list(envp);
+	data.env_list = copy_string_list(envp);
 	init_data(&data);
 	ignore_control_key();
 	while (1)

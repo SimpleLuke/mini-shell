@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 18:32:36 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 18:56:08 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_ast	*job(t_data *data)
 	t_ast	*node;
 	t_list	*tmp;
 
-	printf("job\n");
+	// printf("job\n");
 	tmp = data->cur_token;
 	data->cur_token = tmp;
 	// <command> '|' <job>
@@ -123,7 +123,7 @@ t_ast	*cmd(t_data *data)
 	t_ast	*node;
 	t_list	*tmp;
 
-	printf("cmd\n");
+	// printf("cmd\n");
 	tmp = data->cur_token;
 	data->cur_token = tmp;
 	// <simple command>
@@ -135,7 +135,7 @@ t_ast	*cmd(t_data *data)
 
 t_ast	*cmd5(t_data *data)
 {
-	printf("cmd5\n");
+	// printf("cmd5\n");
 	return (simplecmd(data));
 }
 
@@ -150,7 +150,7 @@ t_ast	*simplecmd1(t_data *data)
 	t_ast	*result;
 	char	*pathname;
 
-	printf("simplecmd1\n");
+	// printf("simplecmd1\n");
 	if (!term(data, TOKEN, &pathname))
 		return (NULL);
 	// <pathname> <token list>
@@ -168,7 +168,7 @@ t_ast	*tokenlist(t_data *data)
 	t_ast	*node;
 
 	tmp = data->cur_token;
-	printf("tokenlist\n");
+	// printf("tokenlist\n");
 	data->cur_token = tmp;
 	// <token> <token list>
 	node = tokenlist1(data);
@@ -188,7 +188,7 @@ t_ast	*tokenlist1(t_data *data)
 	t_ast	*result;
 	char	*arg;
 
-	printf("tokenlist1\n");
+	// printf("tokenlist1\n");
 	if (!term(data, TOKEN, &arg))
 		return (NULL);
 	token_list_node = tokenlist(data);
@@ -202,7 +202,7 @@ t_ast	*tokenlist1(t_data *data)
 t_ast	*tokenlist2(t_data *data)
 {
 	(void)data;
-	printf("tokenlist2\n");
+	// printf("tokenlist2\n");
 	return (NULL);
 }
 
@@ -437,5 +437,7 @@ int	parse(t_data *data)
 		printf("Syntax Error near: %s\n", token->data);
 		return (-1);
 	}
+	expand_quote(data->ast);
+	expand_dquote(data->ast, data);
 	return (0);
 }
