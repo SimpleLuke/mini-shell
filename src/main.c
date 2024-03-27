@@ -6,13 +6,15 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 17:50:43 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 21:37:08 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_node(t_list *tk_list) { t_token	*data;
+void	print_node(t_list *tk_list)
+{	
+	t_token	*data;
 
 	while (tk_list != NULL)
 	{
@@ -83,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 		if (take_input(&data))
 			continue ;
 		tokenize(&data);
-		print_node(data.tk_list);
+		// print_node(data.tk_list);
 		parse(&data);
 		print_tree(data.ast);
 		ast_node_delete(data.ast);

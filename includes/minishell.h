@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 18:55:52 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 20:54:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "../libft/libft.h"
 # include <readline/readline.h>
-# include <readline/history.h>
+# include <readline/history.h> 
 # include <signal.h>
 # include <stdbool.h>
 
@@ -39,6 +39,7 @@ enum e_TokenType
 	CHAR_HEREDOC = 2,
 	CHAR_LESSER = '<',
 	CHAR_NULL = 0,
+	CHAR_DOLLAR = '$',
 	TOKEN	= -1,
 };
 
@@ -48,6 +49,7 @@ enum
 	STATE_IN_QUOTE,
 	STATE_IN_ESCAPESEQ,
 	STATE_GENERAL,
+	STATE_IN_DOLLAR
 };
 
 typedef struct s_token
@@ -134,8 +136,10 @@ void	printTree(t_ast *root);
 void	printDir(void);
 void	print_node(t_list *tk_list);
 char	**copy_string_list(char **list);
+void	convert_token(char *token);
 
 // expander.c
+void	add_dquote(t_ast *ast);
 void	expand_quote(t_ast *ast);
 void	expand_dquote(t_ast *ast, t_data *data);
 

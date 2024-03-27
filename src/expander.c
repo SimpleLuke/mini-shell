@@ -6,13 +6,47 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 19:01:02 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 20:52:56 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <stdbool.h>
 #include <stdlib.h>
+
+char	*dquote_data(char *data)
+{
+	int		i;
+	int		j;
+	char	*result;
+
+	i = 0;
+	j = 0;
+	result = malloc((ft_strlen(data) + 3) * sizeof(char));
+	result = ft_strdup("\"");
+	result = ft_strjoin_gnl(result, data, ft_strlen(data));
+	result = ft_strjoin_gnl(result, "\"", 1);
+	// printf("!!!!!!!!!!!%s\n", result);
+	return (result);
+}
+
+void	add_dquote(t_ast *ast)
+{
+	char	*tmp;
+
+	if (ast == NULL)
+		return ;
+	if (ast->type == NODE_ARGUMENT && ast->data != NULL && !(ast->data[0] == '\'' && ast->data[ft_strlen(ast->data) - 1] == '\'')
+		&& !(ast->data[0] == '\"' && ast->data[ft_strlen(ast->data) - 0] == '\"'))
+	{
+		printf("HERE\n");
+		tmp = dquote_data(ast->data);
+		free(ast->data);
+		ast->data = tmp;
+	}
+	add_dquote(ast->left);
+	add_dquote(ast->right);
+}
 
 char	*convert_quote(char *data)
 {
@@ -132,5 +166,5 @@ void	expand_dquote(t_ast *ast, t_data *data)
 	}
 	expand_dquote(ast->left, data);
 	expand_dquote(ast->right, data);
-
 }
+

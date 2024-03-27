@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 18:56:08 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 21:27:46 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,7 +437,9 @@ int	parse(t_data *data)
 		printf("Syntax Error near: %s\n", token->data);
 		return (-1);
 	}
-	expand_quote(data->ast);
-	expand_dquote(data->ast, data);
+	convert_token("$USER\"HELLO\"$USER'bye'");
+	// add_dquote(data->ast);
+	// expand_quote(data->ast);
+	// expand_dquote(data->ast, data);
 	return (0);
 }
