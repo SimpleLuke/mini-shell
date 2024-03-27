@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/03/26 18:56:41 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 14:20:50 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,4 +222,10 @@ void	unset_env(char *arg, char ***env_list)
 	}
 	free(*env_list);
 	*env_list = tmp;
+}
+
+void	exit_shell(void)
+{
+	printf("exit\n");
+	exit(EXIT_SUCCESS);
 }

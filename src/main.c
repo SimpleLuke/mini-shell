@@ -6,15 +6,13 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/03/26 18:50:02 by llai             ###   ########.fr       */
+/*   Updated: 2024/03/27 14:21:58 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_node(t_list *tk_list)
-{
-	t_token	*data;
+void	print_node(t_list *tk_list) { t_token	*data;
 
 	while (tk_list != NULL)
 	{
@@ -70,18 +68,19 @@ int	main(int argc, char **argv, char **envp)
 	ignore_control_key();
 	while (1)
 	{
-		env(env_list);
-		export_var("a", &env_list);
-		env(env_list);
-		export_var("a=97", &env_list);
-		env(env_list);
-		unset_env("a", &env_list);
-		env(env_list);
-		pwd();
-		cd("..");
-		pwd();
-		cd("pipex");
-		pwd();
+		// env(env_list);
+		// export_var("a", &env_list);
+		// env(env_list);
+		// export_var("a=97", &env_list);
+		// env(env_list);
+		// unset_env("a", &env_list);
+		// env(env_list);
+		// pwd();
+		// cd("..");
+		// pwd();
+		// cd("pipex");
+		// pwd();
+		// exit_shell();
 		if (take_input(&data))
 			continue ;
 		tokenize(&data);
