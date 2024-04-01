@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 20:54:30 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:30:50 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,12 +136,14 @@ void	printTree(t_ast *root);
 void	printDir(void);
 void	print_node(t_list *tk_list);
 char	**copy_string_list(char **list);
-void	convert_token(char *token);
+char	*convert_token(char *token, t_data *data);
 
 // expander.c
 void	add_dquote(t_ast *ast);
 void	expand_quote(t_ast *ast);
 void	expand_dquote(t_ast *ast, t_data *data);
+char	*convert_quote(char *data);
+char	*convert_dquote(char *str, t_data *data);
 
 // builtins.c
 void	pwd(void);

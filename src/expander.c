@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/03/27 20:52:56 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:41:57 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	add_dquote(t_ast *ast)
 	if (ast->type == NODE_ARGUMENT && ast->data != NULL && !(ast->data[0] == '\'' && ast->data[ft_strlen(ast->data) - 1] == '\'')
 		&& !(ast->data[0] == '\"' && ast->data[ft_strlen(ast->data) - 0] == '\"'))
 	{
-		printf("HERE\n");
+		// printf("HERE\n");
 		tmp = dquote_data(ast->data);
 		free(ast->data);
 		ast->data = tmp;
@@ -131,7 +131,7 @@ char	*convert_dquote(char *str, t_data *data)
 	j = 0;
 	if (str[0] == '\"' && str[ft_strlen(str) - 1] == '\"')
 	{
-		result = malloc((ft_strlen(str) - 1) * sizeof(char));
+		result = malloc((ft_strlen(str) - 0) * sizeof(char));
 		while (str[i])
 		{
 			if (str[i] != '\"')
@@ -143,8 +143,11 @@ char	*convert_dquote(char *str, t_data *data)
 		}
 		result[j] = '\0';
 		tmp = ft_strchr(result, '$');
-		printf("%p %s %d\n", result, tmp + 0, (int)(tmp - result));
+		printf("TMP: %s\n", tmp);
+		// printf("%p %s %d\n", result, tmp + 0, (int)(tmp - result));
 		result[(int)(tmp - result)] = '\0';
+		// envvar = ft_strdup(result);
+		// envvar[(int) (tmp - result)] = '\0';
 		envvar = get_envvar((tmp + 1), data);
 		result = ft_strjoin_gnl(result, envvar, ft_strlen(envvar));
 		return (result);
