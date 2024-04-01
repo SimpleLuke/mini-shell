@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:41:51 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:50:49 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,8 +437,9 @@ int	parse(t_data *data)
 		printf("Syntax Error near: %s\n", token->data);
 		return (-1);
 	}
-	char *tmp = convert_token("$USER\"hello$USER'hi'\"$USER'bye'", data);
-	printf("HEREEE: %s\n", tmp);
+	// char *tmp = convert_token("$USER\"hello$USER'hi'\"$USER'bye'", data);
+	// printf("HEREEE: %s\n", tmp);
+	expand_token(data->ast, data);
 	// add_dquote(data->ast);
 	// expand_quote(data->ast);
 	// expand_dquote(data->ast, data);

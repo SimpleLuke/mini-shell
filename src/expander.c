@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:41:57 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:50:31 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,3 +171,18 @@ void	expand_dquote(t_ast *ast, t_data *data)
 	expand_dquote(ast->right, data);
 }
 
+void	expand_token(t_ast *ast, t_data *data)
+{
+	char	*tmp;
+
+	if (ast == NULL)
+		return ;
+	if (ast->data != NULL)
+	{
+		tmp = convert_token(ast->data, data);
+		free(ast->data);
+		ast->data = tmp;
+	}
+	expand_token(ast->left, data);
+	expand_token(ast->right, data);
+}

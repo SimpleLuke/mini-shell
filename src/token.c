@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:41:48 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:57:12 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
@@ -101,6 +101,12 @@ void	char_in_general(int *i, t_list **tmp, t_data *data)
 		ft_lstnew(ft_strdup(&(data->input_string[*i]))));
 }
 
+void	dollar_in_general(int *i, t_list **tmp, t_data *data)
+{
+	ft_lstadd_back(tmp,
+		ft_lstnew(ft_strdup(&(data->input_string[*i]))));
+}
+
 void	append_in_general(int *i, t_list **tmp, t_data *data)
 {
 	ft_lstadd_back(tmp,
@@ -176,7 +182,7 @@ int	handle_general(t_tokenizer *tker, t_data *data)
 		dquote_in_general(&tker->state, &tker->i, &tker->tmp, data);
 	else if (tker->chtype == CHAR_ESCAPESEQUENCE)
 		escape_in_general(&tker->i, &tker->tmp, data);
-	else if (tker->chtype == CHAR_GENERAL)
+	else if (tker->chtype == CHAR_GENERAL || tker->chtype == CHAR_DOLLAR)
 		char_in_general(&tker->i, &tker->tmp, data);
 	else if (tker->chtype == CHAR_GREATER || tker->chtype == CHAR_LESSER
 		|| tker->chtype == CHAR_PIPE)
@@ -262,7 +268,7 @@ void	expand_node(t_list *tk_list)
 	}
 }
 
-char	*expand_token(t_token *token, t_data *data)
+char	*expand_strtoken(t_token *token, t_data *data)
 {
 	char	*str;
 	char	*result;
@@ -311,7 +317,7 @@ void	expanded_list(t_list *lst, t_data *data)
 	while (lst)
 	{
 		token = lst->content;
-		new_content = expand_token(token, data);
+		new_content = expand_strtoken(token, data);
 		free(token->data);
 		token->data = new_content;
 		lst = lst->next;
@@ -397,7 +403,11 @@ char	*convert_token(char *token, t_data *data)
 			ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
 		}
 		if (token[tker.i] == CHAR_NULL)
-			break ;
+		{
+			tmp_to_str(&head, tker.tmp, tker.chtype);
+			ft_lstclear(&tker.tmp, free);
+			break;
+		}
 		tker.i++;
 	}
 	print_node(head);

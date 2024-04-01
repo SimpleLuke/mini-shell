@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:30:50 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:48:11 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ void	expand_quote(t_ast *ast);
 void	expand_dquote(t_ast *ast, t_data *data);
 char	*convert_quote(char *data);
 char	*convert_dquote(char *str, t_data *data);
+void	expand_token(t_ast *ast, t_data *data);
 
 // builtins.c
 void	pwd(void);

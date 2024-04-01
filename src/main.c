@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 11:25:21 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/01 12:55:01 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 		if (take_input(&data))
 			continue ;
 		tokenize(&data);
-		// print_node(data.tk_list);
+		print_node(data.tk_list);
 		parse(&data);
 		print_tree(data.ast);
 		ast_node_delete(data.ast);
