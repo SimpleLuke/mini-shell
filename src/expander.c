@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:50:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/03 14:17:26 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,8 @@ char	*get_envvar(char *arg, t_data *data)
 	char	*result;
 
 	i = 0;
-	while (data->env_list[i])
+	result = NULL;
+	while (data->env_list[i] != NULL)
 	{
 		if (exist_var(arg, (data->env_list[i]), &is_exist))
 		{
@@ -149,7 +150,8 @@ char	*convert_dquote(char *str, t_data *data)
 		// envvar = ft_strdup(result);
 		// envvar[(int) (tmp - result)] = '\0';
 		envvar = get_envvar((tmp + 1), data);
-		result = ft_strjoin_gnl(result, envvar, ft_strlen(envvar));
+		if (envvar)
+			result = ft_strjoin_gnl(result, envvar, ft_strlen(envvar));
 		return (result);
 	}
 	return (NULL);

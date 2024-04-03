@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:55:01 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/03 14:14:59 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ int	main(int argc, char **argv, char **envp)
 	ignore_control_key();
 	while (1)
 	{
-		// env(env_list);
-		// export_var("a", &env_list);
+		// env(data.env_list);
+		// export_var("a", &data.env_list);
 		// env(env_list);
 		// export_var("a=97", &env_list);
 		// env(env_list);
@@ -85,10 +85,11 @@ int	main(int argc, char **argv, char **envp)
 		if (take_input(&data))
 			continue ;
 		tokenize(&data);
-		print_node(data.tk_list);
+		// print_node(data.tk_list);
 		parse(&data);
 		print_tree(data.ast);
 		ast_node_delete(data.ast);
+		data.ast = NULL;
 		ft_lstclear(&(data.tk_list), free);
 	}
 	return (0);

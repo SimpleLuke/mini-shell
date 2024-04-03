@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:57:12 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/03 14:18:52 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
@@ -322,7 +322,6 @@ void	expanded_list(t_list *lst, t_data *data)
 		token->data = new_content;
 		lst = lst->next;
 	}
-
 }
 
 char	*convert_token(char *token, t_data *data)
@@ -405,20 +404,24 @@ char	*convert_token(char *token, t_data *data)
 		if (token[tker.i] == CHAR_NULL)
 		{
 			tmp_to_str(&head, tker.tmp, tker.chtype);
+			ft_lstadd_back(&head, NULL);
 			ft_lstclear(&tker.tmp, free);
 			break;
 		}
 		tker.i++;
 	}
 	print_node(head);
+	// (void)data;
 	expanded_list(head, data);
-	printf("AFTER=============\n");
-	print_node(head);
+	// printf("AFTER=============\n");
+	// print_node(head);
+	// printf("DONE==============\n");
 	result = ft_strdup("");
 	while (head)
 	{
 		node = head->content;
-		result = ft_strjoin_gnl(result, node->data, ft_strlen(node->data));
+		if (node->data)
+			result = ft_strjoin_gnl(result, node->data, ft_strlen(node->data));
 		head = head->next;
 	}
 	return (result);

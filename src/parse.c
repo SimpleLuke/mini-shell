@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:50:49 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/03 12:32:13 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,10 +385,10 @@ int	check_unclosed(t_list *tk_list)
 			return (printf("Syntax Error : unclosed double quote\n"), -1);
 		if (token->data[0] == '\'' && last != '\'')
 			return (printf("Syntax Error : unclosed quote\n"), -1);
-		if (!(token->data[0] == '\'' && last == '\'')
-			&& count_type_in_token(CHAR_DQUOTE, token->data) % 2)
+		if ((token->data[0] == '\'' && last == '\'')
+			&& count_type_in_token(CHAR_QOUTE, token->data) % 2)
 			return (printf("Syntax Error : unclosed quote\n"), -1);
-		if (!(token->data[0] == '\"' && last == '\"')
+		if ((token->data[0] == '\"' && last == '\"')
 			&& count_type_in_token(CHAR_DQUOTE, token->data) % 2)
 			return (printf("Syntax Error : unclosed quote\n"), -1);
 		tk_list = tk_list->next;
