@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/01 12:48:11 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/03 14:34:18 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ void	printDir(void);
 void	print_node(t_list *tk_list);
 char	**copy_string_list(char **list);
 char	*convert_token(char *token, t_data *data);
+char	*convert_dqtoken(char *token, t_data *data);
 
 // expander.c
 void	add_dquote(t_ast *ast);
