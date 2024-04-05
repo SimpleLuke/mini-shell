@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 14:58:44 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 15:40:53 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ typedef struct s_data
 	t_list	*cur_token;
 	t_ast	*ast;
 	t_cmd	cmd;
+	int		child_idx;
 }	t_data;
 
 void	ignore_control_key(void);

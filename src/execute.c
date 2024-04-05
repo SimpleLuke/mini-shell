@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:21:15 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 15:41:44 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	execute_pipe(t_ast *node, t_data *data)
 		close(wr_pipe);
 		pipe(pipe_fd);
 		wr_pipe = pipe_fd[1];
+		data->child_idx++;
 		execute_cmdpath(next_node->left, data, rd_pipe, wr_pipe);
 		close(rd_pipe);
 		rd_pipe = pipe_fd[0];

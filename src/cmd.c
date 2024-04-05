@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:08:32 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 15:47:08 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,8 @@ void	free_cmd(t_data *data)
 	ft_free_strarr(&data->cmd.cmd_args);
 }
 
-void	execute_cmd(t_ast *node, t_data *data)
+int	execute_builtins(t_ast *node, t_data *data)
 {
-	pid_t	pid;
-	int		stdoutfd;
-	int		fd;
-	int		i;
-	// check built-ins
 	if (ft_strlen(node->data) == ft_strlen("echo") && ft_strncmp(node->data, "echo", 4) == 0)
 	{
 		if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
@@ -136,11 +131,24 @@ void	execute_cmd(t_ast *node, t_data *data)
 			echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
 		else
 			echo(false, "");
-		return ;
+		return (1);
 	}
+	return (0);
+}
+
+void	execute_cmd(t_ast *node, t_data *data)
+{
+	pid_t	pid;
+	int		stdoutfd;
+	int		in_fd;
+	int		out_fd;
+	int		i;
+	// check built-ins
+	if (execute_builtins(node, data))
+		return ;
 	// built in tbc
 
-	fd = -1;
+	in_fd = -1;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -153,10 +161,10 @@ void	execute_cmd(t_ast *node, t_data *data)
 			{
 				if (data->io.infile_list[i].type == CHAR_LESSER)
 				{
-					if (fd != -1)
-						close(fd);
-					fd = open(data->io.infile_list[i].name, O_RDONLY);
-					if (fd == -1)
+					if (in_fd != -1)
+						close(in_fd);
+					in_fd = open(data->io.infile_list[i].name, O_RDONLY);
+					if (in_fd == -1)
 					{
 						print_err(data->io.infile_list[i].name, strerror(errno), EXIT_FAILURE);
 						exit(EXIT_FAILURE);
@@ -164,34 +172,34 @@ void	execute_cmd(t_ast *node, t_data *data)
 				}
 				i++;
 			}
-			dup2(fd, STDIN_FILENO);
+			dup2(in_fd, STDIN_FILENO);
 		}
 
-		fd = -1;
+		out_fd = -1;
 		if (data->io.out_size)
 		{
 			i = 0;
 			while (i < data->io.out_size)
 			{
-				if (fd != -1)
-					close(fd);
-				if (data->io.outfile_list[i].type == CHAR_GREATER)
-					fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+				if (out_fd != -1)
+					close(out_fd);
+				if (data->io.outfile_list[i].type == CHAR_GREATER && data->io.outfile_list[i].idx == data->child_idx)
+					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 				else if (data->io.outfile_list[i].type == CHAR_APPEND)
-					fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
-				if (fd == -1)
+					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+				if (out_fd == -1)
 				{
 					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
 					exit(EXIT_FAILURE);
 				}
 				i++;
 			}
-			dup2(fd, STDOUT_FILENO);
+			dup2(out_fd, STDOUT_FILENO);
 		}
 
-		if (data->cmd.rd_pipe != -1)
+		if (data->cmd.rd_pipe != -1 && in_fd == -1)
 			dup2(data->cmd.rd_pipe, STDIN_FILENO);
-		if (data->cmd.wr_pipe != -1)
+		if (data->cmd.wr_pipe != -1 && out_fd == -1)
 			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
 
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
