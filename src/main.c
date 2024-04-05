@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:24:54 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 15:16:42 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int	main(int argc, char **argv, char **envp)
 			continue;
 		print_tree(data.ast);
 		execute_tree(&data);
-		printf("%s\n", data.cmd.cmd);
+		// printf("%s\n", data.cmd.cmd);
 		ast_node_delete(data.ast);
 		data.ast = NULL;
 		ft_lstclear(&(data.tk_list), free);

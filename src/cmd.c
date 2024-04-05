@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 14:15:45 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 15:08:32 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,12 +105,20 @@ char	**get_cmd_args(t_ast *node)
 	return (result);
 }
 
-int	init_cmd(t_ast *node, t_data *data)
+int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
 	data->cmd.cmd = get_cmd(node->data, data);
 	data->cmd.cmd_args = get_cmd_args(node);
+	data->cmd.rd_pipe = rd_pipe;
+	data->cmd.wr_pipe = wr_pipe;
 	// print_strarr(data->cmd.cmd_args);
 	return (0);
+}
+
+void	free_cmd(t_data *data)
+{
+	free(data->cmd.cmd);
+	ft_free_strarr(&data->cmd.cmd_args);
 }
 
 void	execute_cmd(t_ast *node, t_data *data)
@@ -180,6 +188,11 @@ void	execute_cmd(t_ast *node, t_data *data)
 			}
 			dup2(fd, STDOUT_FILENO);
 		}
+
+		if (data->cmd.rd_pipe != -1)
+			dup2(data->cmd.rd_pipe, STDIN_FILENO);
+		if (data->cmd.wr_pipe != -1)
+			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
 
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{

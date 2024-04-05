@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:55:18 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 14:58:44 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ typedef struct s_cmd
 	char	*outfile;
 	bool	stdin_pipe;
 	bool	stdout_pipe;
+	int		rd_pipe;
+	int		wr_pipe;
 
 }	t_cmd;
 
@@ -183,8 +185,9 @@ char	*get_envvar(char *arg, t_data *data);
 void	execute_tree(t_data *data);
 
 // cmd.c
-int		init_cmd(t_ast *node, t_data *data);
+int		init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe);
 void	execute_cmd(t_ast *node, t_data *data);
+void	free_cmd(t_data *data);
 
 // error.c
 int		print_err(char *msg1, char *msg2, int errstate);
