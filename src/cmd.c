@@ -6,11 +6,14 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:43:32 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 14:15:45 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdlib.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
 
 char	*get_cmd(char *cmd, t_data *data);
 char	**get_env_list(t_data *data);
@@ -113,6 +116,9 @@ int	init_cmd(t_ast *node, t_data *data)
 void	execute_cmd(t_ast *node, t_data *data)
 {
 	pid_t	pid;
+	int		stdoutfd;
+	int		fd;
+	int		i;
 	// check built-ins
 	if (ft_strlen(node->data) == ft_strlen("echo") && ft_strncmp(node->data, "echo", 4) == 0)
 	{
@@ -126,11 +132,58 @@ void	execute_cmd(t_ast *node, t_data *data)
 	}
 	// built in tbc
 
+	fd = -1;
 	pid = fork();
 	if (pid == 0)
 	{
+		stdoutfd = dup(STDOUT_FILENO);
+
+		if (data->io.in_size)
+		{
+			i = 0;
+			while (i < data->io.in_size)
+			{
+				if (data->io.infile_list[i].type == CHAR_LESSER)
+				{
+					if (fd != -1)
+						close(fd);
+					fd = open(data->io.infile_list[i].name, O_RDONLY);
+					if (fd == -1)
+					{
+						print_err(data->io.infile_list[i].name, strerror(errno), EXIT_FAILURE);
+						exit(EXIT_FAILURE);
+					}
+				}
+				i++;
+			}
+			dup2(fd, STDIN_FILENO);
+		}
+
+		fd = -1;
+		if (data->io.out_size)
+		{
+			i = 0;
+			while (i < data->io.out_size)
+			{
+				if (fd != -1)
+					close(fd);
+				if (data->io.outfile_list[i].type == CHAR_GREATER)
+					fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+				else if (data->io.outfile_list[i].type == CHAR_APPEND)
+					fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+				if (fd == -1)
+				{
+					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
+					exit(EXIT_FAILURE);
+				}
+				i++;
+			}
+			dup2(fd, STDOUT_FILENO);
+		}
+
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{
+			dup2(stdoutfd, STDOUT_FILENO);
 			err_exit(print_err(data->cmd.cmd_args[0], strerror(errno), EXIT_FAILURE), data);
 		}
 	}

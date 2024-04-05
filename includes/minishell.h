@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:41:44 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 13:55:18 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdbool.h>
 # include <errno.h>
 # include <string.h>
+# include <fcntl.h>
 
 # define MAXCOM 1000
 # define MAXLIST 100
