@@ -1,1 +1,10 @@
-       0       0       0
+Makefile
+bin
+includes
+infile
+infile1
+libft
+minishell
+outfile
+outfile1
+src

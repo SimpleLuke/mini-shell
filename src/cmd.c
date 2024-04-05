@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:47:08 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 16:46:05 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,8 @@ void	free_cmd(t_data *data)
 {
 	free(data->cmd.cmd);
 	ft_free_strarr(&data->cmd.cmd_args);
+	data->cmd.rd_pipe = -1;
+	data->cmd.wr_pipe = -1;
 }
 
 int	execute_builtins(t_ast *node, t_data *data)
@@ -173,6 +175,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 				i++;
 			}
 			dup2(in_fd, STDIN_FILENO);
+			close(in_fd);
 		}
 
 		out_fd = -1;
@@ -195,13 +198,22 @@ void	execute_cmd(t_ast *node, t_data *data)
 				i++;
 			}
 			dup2(out_fd, STDOUT_FILENO);
+			close(out_fd);
 		}
 
 		if (data->cmd.rd_pipe != -1 && in_fd == -1)
+		{
 			dup2(data->cmd.rd_pipe, STDIN_FILENO);
-		if (data->cmd.wr_pipe != -1 && out_fd == -1)
-			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
+			// close(data->cmd.rd_pipe);
 
+		}
+		if (data->cmd.wr_pipe != -1 && out_fd == -1)
+		{
+			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
+			// close(data->cmd.wr_pipe);
+		}
+
+		printf("EXE\n");
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{
 			dup2(stdoutfd, STDOUT_FILENO);
