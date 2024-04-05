@@ -6,11 +6,35 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 14:14:59 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 13:24:54 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+void	print_strarr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+	{
+		printf("%s\n", arr[i]);
+		i++;
+	}
+}
+
+int	arrlen(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+	{
+		i++;
+	}
+	return (i);
+}
 
 void	print_node(t_list *tk_list)
 {	
@@ -86,8 +110,11 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		tokenize(&data);
 		// print_node(data.tk_list);
-		parse(&data);
+		if (parse(&data) != 0)
+			continue;
 		print_tree(data.ast);
+		execute_tree(&data);
+		printf("%s\n", data.cmd.cmd);
 		ast_node_delete(data.ast);
 		data.ast = NULL;
 		ft_lstclear(&(data.tk_list), free);

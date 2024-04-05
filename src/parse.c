@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 12:32:13 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 12:43:45 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,10 +371,8 @@ void	store_redirection(t_data *data)
 int	check_unclosed(t_list *tk_list)
 {
 	t_token	*token;
-	int		i;
 	char	last;
 
-	i = 0;
 	if (tk_list == NULL)
 		return (0);
 	while (tk_list)

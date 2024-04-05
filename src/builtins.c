@@ -6,13 +6,14 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 13:56:02 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 13:30:10 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -27,10 +28,13 @@ void	pwd(void)
 		perror("getcwd() error");
 }
 
-void	echo(bool newline, char *str)
+void	echo(bool nflag, char *str)
 {
-	printf("%s", str);
-	if (newline)
+	if (str)
+		printf("%s", str);
+	else
+		printf("");
+	if (!nflag)
 		printf("\n");
 }
 
@@ -114,10 +118,8 @@ int	exist_var(char *arg, char *str, int *is_exist)
 {
 	char **arr;
 	char	**arg_arr;
-	char	*tmp;
 
 	arg_arr = NULL;
-	tmp = NULL;
 	*is_exist = 0;
 	arr = ft_split(str, '=');
 	if (ft_strchr(arg, '='))

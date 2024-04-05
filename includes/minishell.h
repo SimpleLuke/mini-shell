@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 14:34:18 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 13:41:44 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <readline/history.h> 
 # include <signal.h>
 # include <stdbool.h>
+# include <errno.h>
+# include <string.h>
 
 # define MAXCOM 1000
 # define MAXLIST 100
@@ -94,6 +96,8 @@ typedef enum e_NodeType
 	NODE_DATA = (1 << 9),
 }	t_NodeType;
 
+#define NODETYPE(a) (a & (~NODE_DATA))
+
 typedef struct s_ast
 {
 	int				type;
@@ -111,6 +115,19 @@ typedef struct s_tokenizer
 
 }	t_tokenizer;
 
+typedef struct s_cmd
+{
+	char	*cmd;
+	char	**cmd_args;
+	int		infile_fd;
+	int		outfile_fd;
+	char	*infile;
+	char	*outfile;
+	bool	stdin_pipe;
+	bool	stdout_pipe;
+
+}	t_cmd;
+
 typedef struct s_data
 {
 	char	*input_string;
@@ -119,6 +136,7 @@ typedef struct s_data
 	t_io	io;
 	t_list	*cur_token;
 	t_ast	*ast;
+	t_cmd	cmd;
 }	t_data;
 
 void	ignore_control_key(void);
@@ -132,7 +150,9 @@ void	ast_node_set_type(t_ast *node, t_NodeType nodetype);
 void	ast_node_set_data(t_ast *node, char *data);
 void	ast_node_delete(t_ast *node);
 
+int		arrlen(char **arr);
 void	printTree(t_ast *root);
+void	print_strarr(char **arr);
 void	printDir(void);
 void	print_node(t_list *tk_list);
 char	**copy_string_list(char **list);
@@ -157,5 +177,16 @@ void	unset_env(char *arg, char ***env_list);
 void	exit_shell(void);
 int		exist_var(char *arg, char *str, int *is_exist);
 char	*get_envvar(char *arg, t_data *data);
+
+// execute.c
+void	execute_tree(t_data *data);
+
+// cmd.c
+int		init_cmd(t_ast *node, t_data *data);
+void	execute_cmd(t_ast *node, t_data *data);
+
+// error.c
+int		print_err(char *msg1, char *msg2, int errstate);
+void	err_exit(int errstate, t_data *data);
 
 #endif // !MINISHELL_H

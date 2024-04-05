@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 14:17:26 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/05 12:45:41 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,8 @@
 
 char	*dquote_data(char *data)
 {
-	int		i;
-	int		j;
 	char	*result;
 
-	i = 0;
-	j = 0;
 	result = malloc((ft_strlen(data) + 3) * sizeof(char));
 	result = ft_strdup("\"");
 	result = ft_strjoin_gnl(result, data, ft_strlen(data));
