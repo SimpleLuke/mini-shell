@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:41:10 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 14:48:29 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	init_data(t_data *data)
 	data->ast = NULL;
 	data->cur_token = NULL;
 	data->child_idx = 0;
+	data->cmd_count = 0;
 }
 
 int	main(int argc, char **argv, char **envp)

@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:41:44 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 15:20:46 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	execute_pipe(t_ast *node, t_data *data)
 	pipe(pipe_fd);
 	wr_pipe = pipe_fd[1];
 	rd_pipe = pipe_fd[0];
-	execute_cmdpath(node->left, data, 0, wr_pipe);
+	execute_cmdpath(node->left, data, -1, wr_pipe);
 	next_node = node->right;
 	while (next_node != NULL && NODETYPE(next_node->type) == NODE_PIPE)
 	{
@@ -74,7 +74,41 @@ void	execute_job(t_ast *node, t_data *data, bool async)
 
 }
 
+void	count_cmds(t_ast *root, t_data *data)
+{
+	if (root == NULL)
+		return ;
+	if (NODETYPE(root->type) == NODE_CMDPATH)
+		data->cmd_count++;
+	count_cmds(root->left, data);
+	count_cmds(root->right, data);
+
+}
+
+void	init_pids(t_data *data)
+{
+	count_cmds(data->ast, data);
+	data->pids = malloc(sizeof(int) * data->cmd_count);
+}
+
+void	run_parent(t_data *data)
+{
+	int	wpid;
+	int	status;
+
+	while (--data->child_idx >= 0)
+	{
+		wpid = waitpid(data->pids[data->child_idx], &status, 0);
+		if (wpid == data->pids[data->cmd_count - 1])
+			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
+				data->exit_code = WEXITSTATUS(status);
+	}
+}
+
 void	execute_tree(t_data *data)
 {
+	init_pids(data);
+	data->child_idx = 0;
 	execute_job(data->ast, data, false);
+	run_parent(data);
 }

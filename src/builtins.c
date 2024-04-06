@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:30:10 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 15:11:26 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	echo(bool nflag, char *str)
 	if (str)
 		printf("%s", str);
 	else
-		printf("");
+		write(1, "\0", 1);
 	if (!nflag)
 		printf("\n");
 }

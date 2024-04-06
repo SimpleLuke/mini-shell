@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 13:07:47 by llai              #+#    #+#             */
-/*   Updated: 2024/03/24 16:48:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 15:18:11 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	ast_node_delete(t_ast *node)
 	if (node == NULL)
 		return ;
 	if (node->type & NODE_DATA)
-		free(node->data);
+		ft_free((void **)&node->data);
 	ast_node_delete(node->left);
 	ast_node_delete(node->right);
 	free(node);

@@ -6,11 +6,12 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 16:46:05 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 15:16:15 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
@@ -107,8 +108,10 @@ char	**get_cmd_args(t_ast *node)
 
 int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
-	data->cmd.cmd = get_cmd(node->data, data);
 	data->cmd.cmd_args = get_cmd_args(node);
+	data->cmd.cmd = get_cmd(node->data, data);
+	if (!data->cmd.cmd)
+		print_err(data->cmd.cmd_args[0], "command not found", EXIT_FAILURE);
 	data->cmd.rd_pipe = rd_pipe;
 	data->cmd.wr_pipe = wr_pipe;
 	// print_strarr(data->cmd.cmd_args);
@@ -117,7 +120,8 @@ int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 
 void	free_cmd(t_data *data)
 {
-	free(data->cmd.cmd);
+	if (data->cmd.cmd)
+		ft_free((void **)&data->cmd.cmd);
 	ft_free_strarr(&data->cmd.cmd_args);
 	data->cmd.rd_pipe = -1;
 	data->cmd.wr_pipe = -1;
@@ -151,10 +155,24 @@ void	execute_cmd(t_ast *node, t_data *data)
 	// built in tbc
 
 	in_fd = -1;
-	pid = fork();
+	out_fd = -1;
+	data->pids[data->child_idx] = fork();
+	pid = data->pids[data->child_idx];
 	if (pid == 0)
 	{
 		stdoutfd = dup(STDOUT_FILENO);
+
+		if (data->cmd.rd_pipe != -1 && in_fd == -1)
+		{
+			dup2(data->cmd.rd_pipe, STDIN_FILENO);
+			// close(data->cmd.rd_pipe);
+
+		}
+		if (data->cmd.wr_pipe != -1 && out_fd == -1)
+		{
+			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
+			// close(data->cmd.wr_pipe);
+		}
 
 		if (data->io.in_size)
 		{
@@ -175,10 +193,9 @@ void	execute_cmd(t_ast *node, t_data *data)
 				i++;
 			}
 			dup2(in_fd, STDIN_FILENO);
-			close(in_fd);
+			// close(in_fd);
 		}
 
-		out_fd = -1;
 		if (data->io.out_size)
 		{
 			i = 0;
@@ -195,25 +212,27 @@ void	execute_cmd(t_ast *node, t_data *data)
 					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
 					exit(EXIT_FAILURE);
 				}
+				// printf("OUTFILE: %s i:%d idx:%d\n", data->io.outfile_list[i].name, i, data->io.outfile_list[i].idx);
 				i++;
 			}
 			dup2(out_fd, STDOUT_FILENO);
-			close(out_fd);
+			// close(out_fd);
 		}
 
-		if (data->cmd.rd_pipe != -1 && in_fd == -1)
-		{
-			dup2(data->cmd.rd_pipe, STDIN_FILENO);
-			// close(data->cmd.rd_pipe);
+		// if (data->cmd.rd_pipe != -1 && in_fd == -1)
+		// {
+		// 	dup2(data->cmd.rd_pipe, STDIN_FILENO);
+		// 	// close(data->cmd.rd_pipe);
+		//
+		// }
+		// if (data->cmd.wr_pipe != -1 && out_fd == -1)
+		// {
+		// 	dup2(data->cmd.wr_pipe, STDOUT_FILENO);
+		// 	// close(data->cmd.wr_pipe);
+		// }
 
-		}
-		if (data->cmd.wr_pipe != -1 && out_fd == -1)
-		{
-			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
-			// close(data->cmd.wr_pipe);
-		}
-
-		printf("EXE\n");
+		if (data->cmd.cmd == NULL)
+			err_exit(EXIT_FAILURE, data);
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{
 			dup2(stdoutfd, STDOUT_FILENO);
@@ -225,6 +244,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 		perror("fork");
 		return ;
 	}
-	while (waitpid(pid, NULL, 0) <= 0);
+	data->child_idx++;
+	// while (waitpid(pid, NULL, 0) <= 0);
 	return ;
 }

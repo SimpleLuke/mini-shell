@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 15:40:53 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 15:10:49 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <errno.h>
 # include <string.h>
 # include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/types.h>
 
 # define MAXCOM 1000
 # define MAXLIST 100
@@ -91,7 +93,7 @@ typedef enum e_NodeType
 	NODE_REDIRECT_IN = (1 << 3),
 	NODE_REDIRECT_OUT = (1 << 4),
 	NODE_CMDPATH = (1 << 5),
-	NODE_ARGUMENT = (-1 << 6),
+	NODE_ARGUMENT = (1 << 6),
 	NODE_REDIRECT_APPREND = (1 << 7),
 	NODE_REDIRECT_HEREDOC = (1 << 8),
 	NODE_DATA = (1 << 9),
@@ -141,6 +143,9 @@ typedef struct s_data
 	t_ast	*ast;
 	t_cmd	cmd;
 	int		child_idx;
+	int		*pids;
+	int		cmd_count;
+	int		exit_code;
 }	t_data;
 
 void	ignore_control_key(void);
