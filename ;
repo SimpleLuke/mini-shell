@@ -6,12 +6,11 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 20:31:19 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 20:14:38 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <stdio.h>
 
 void	execute_simple_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
@@ -32,28 +31,28 @@ void	execute_cmdpath(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 
 void	execute_pipe(t_ast *node, t_data *data)
 {
-	// int	data->pipe_fd[2];
+	int	pipe_fd[2];
 	int	wr_pipe;
 	int	rd_pipe;
 	t_ast	*next_node;
 
-	pipe(data->pipe_fd);
-	wr_pipe = data->pipe_fd[1];
-	rd_pipe = data->pipe_fd[0];
+	pipe(pipe_fd);
+	wr_pipe = pipe_fd[1];
+	rd_pipe = pipe_fd[0];
 	execute_cmdpath(node->left, data, 0, wr_pipe);
 	next_node = node->right;
 	while (next_node != NULL && NODETYPE(next_node->type) == NODE_PIPE)
 	{
 		close(wr_pipe);
-		pipe(data->pipe_fd);
-		wr_pipe = data->pipe_fd[1];
+		pipe(pipe_fd);
+		wr_pipe = pipe_fd[1];
 		data->child_idx++;
 		execute_cmdpath(next_node->left, data, rd_pipe, wr_pipe);
 		close(rd_pipe);
-		rd_pipe = data->pipe_fd[0];
+		rd_pipe = pipe_fd[0];
 		next_node = next_node->right;
 	}
-	rd_pipe = data->pipe_fd[0];
+	rd_pipe = pipe_fd[0];
 	fprintf(stderr, "rd_pipe: %d\n", rd_pipe);
 	close(wr_pipe);
 	execute_cmdpath(next_node, data, rd_pipe, 1);
@@ -98,7 +97,6 @@ void	run_parent(t_data *data)
 	while (--data->child_idx >= 0)
 	{
 		wpid = waitpid(data->pids[data->child_idx], &status, 0);
-		fprintf(stderr, "wpid: %d\n", wpid);
 		if (wpid == data->pids[data->cmd_count - 1])
 			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
 				data->exit_code = WEXITSTATUS(status);

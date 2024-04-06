@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 18:31:04 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 20:28:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,35 +146,44 @@ void	execute_cmd(t_ast *node, t_data *data)
 {
 	pid_t	pid;
 	int		stdoutfd;
-	int		in_fd;
-	int		out_fd;
+	// int		data->in_fd;
+	// int		data->out_fd;
 	int		i;
 	// check built-ins
 	if (execute_builtins(node, data))
 		return ;
 	// built in tbc
 
-	in_fd = -2;
-	out_fd = -2;
+	data->in_fd = -2;
+	data->out_fd = -2;
 	data->pids[data->child_idx] = fork();
 	pid = data->pids[data->child_idx];
+	fprintf(stderr,"child idx: %d pid: %d\n", data->child_idx, pid);
 	if (pid == 0)
 	{
 		stdoutfd = dup(STDOUT_FILENO);
 
-		if (data->cmd.rd_pipe != -1 && in_fd < 0)
+		if (data->cmd.rd_pipe != -1 && data->in_fd < 0)
 		{
 			fprintf(stderr, "pipe rd : %d child: %d\n", data->cmd.rd_pipe, data->child_idx);
 			dup2(data->cmd.rd_pipe, STDIN_FILENO);
-			// close(data->cmd.rd_pipe);
+			if (data->cmd.rd_pipe > 2)
+			{
+				fprintf(stderr, "close rd\n");
+				close(data->cmd.rd_pipe);
+			}
 
 		}
-		if (data->cmd.wr_pipe != -1 && out_fd < 0)
+		if (data->cmd.wr_pipe != -1 && data->out_fd < 0)
 		{
 			// fprintf(stderr, "write : %d\n", data->cmd.wr_pipe);
 			fprintf(stderr, "pipe wr : %d child: %d\n", data->cmd.wr_pipe, data->child_idx);
 			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
-			// close(data->cmd.wr_pipe);
+			if (data->cmd.wr_pipe > 2)
+			{
+				fprintf(stderr, "close wr\n");
+				close(data->cmd.wr_pipe);
+			}
 		}
 
 		if (data->io.in_size)
@@ -185,10 +194,10 @@ void	execute_cmd(t_ast *node, t_data *data)
 				// if (data->io.infile_list[i].type == CHAR_LESSER)
 				if (data->io.infile_list[i].type == CHAR_LESSER && data->io.infile_list[i].idx == data->child_idx)
 				{
-					if (in_fd != -1)
-						close(in_fd);
-					in_fd = open(data->io.infile_list[i].name, O_RDONLY);
-					if (in_fd == -1)
+					if (data->in_fd != -1)
+						close(data->in_fd);
+					data->in_fd = open(data->io.infile_list[i].name, O_RDONLY);
+					if (data->in_fd == -1)
 					{
 						print_err(data->io.infile_list[i].name, strerror(errno), EXIT_FAILURE);
 						exit(EXIT_FAILURE);
@@ -196,8 +205,8 @@ void	execute_cmd(t_ast *node, t_data *data)
 				}
 				i++;
 			}
-			dup2(in_fd, STDIN_FILENO);
-			// close(in_fd);
+			dup2(data->in_fd, STDIN_FILENO);
+			close(data->in_fd);
 		}
 
 		if (data->io.out_size)
@@ -210,34 +219,34 @@ void	execute_cmd(t_ast *node, t_data *data)
 				// fprintf(stderr,"out: %d %d %s \n", data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
 				if (data->io.outfile_list[i].type == CHAR_GREATER && data->io.outfile_list[i].idx == data->child_idx)
 				{
-					if (out_fd > -1)
-						close(out_fd);
-					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+					if (data->out_fd > -1)
+						close(data->out_fd);
+					data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 				}
 				else if (data->io.outfile_list[i].type == CHAR_APPEND)
 				{
-					if (out_fd > -1)
-						close(out_fd);
-					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+					if (data->out_fd > -1)
+						close(data->out_fd);
+					data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
 				}
-				if (out_fd == -1)
+				if (data->out_fd == -1)
 				{
 					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
 					exit(EXIT_FAILURE);
 				}
 				i++;
 			}
-			fprintf(stderr, "fdout : %d child: %d\n", out_fd, data->child_idx);
-			dup2(out_fd, STDOUT_FILENO);
-			// close(out_fd);
+			fprintf(stderr, "fdout : %d child: %d\n", data->out_fd, data->child_idx);
+			dup2(data->out_fd, STDOUT_FILENO);
+			close(data->out_fd);
 		}
 
-		// if (data->cmd.rd_pipe != -1 && in_fd < 0)
+		// if (data->cmd.rd_pipe != -1 && data->in_fd < 0)
 		// {
 		// 	dup2(data->cmd.rd_pipe, STDIN_FILENO);
 		// 	// close(data->cmd.rd_pipe);
 		// }
-		// if (data->cmd.wr_pipe != -1 && out_fd < 0)
+		// if (data->cmd.wr_pipe != -1 && data->out_fd < 0)
 		// {
 		// 	dup2(data->cmd.wr_pipe, STDOUT_FILENO);
 		// 	// close(data->cmd.wr_pipe);

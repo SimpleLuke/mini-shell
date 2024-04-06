@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 16:57:57 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 20:30:47 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,9 @@ typedef struct s_data
 	int		*pids;
 	int		cmd_count;
 	int		exit_code;
+	int		in_fd;
+	int		out_fd;
+	int		pipe_fd[2];
 }	t_data;
 
 void	ignore_control_key(void);

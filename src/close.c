@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 17:41:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 17:41:07 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 20:30:15 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ static void	close_pipes(t_data *data);
 
 void	close_fds(t_data *data)
 {
-	if (data->infile_fd != -1)
-		close(data->infile_fd);
-	if (data->outfile_fd != -1)
-		close(data->outfile_fd);
+	if (data->in_fd != -1)
+		close(data->in_fd);
+	if (data->out_fd != -1)
+		close(data->out_fd);
 	close_pipes(data);
 }
 
