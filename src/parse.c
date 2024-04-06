@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 12:43:45 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 16:23:31 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,6 +426,8 @@ int	parse(t_data *data)
 	if (check_unclosed(data->tk_list))
 		return (-1);
 	store_redirection(data);
+	// printf("out: %d %d %s \n", data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
+	// printf("out: %d %d %s \n", data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
 	data->cur_token = data->tk_list;
 	data->ast = job(data);
 	if (data->cur_token != NULL)

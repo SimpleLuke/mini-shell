@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 15:16:15 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 18:31:04 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,22 +154,25 @@ void	execute_cmd(t_ast *node, t_data *data)
 		return ;
 	// built in tbc
 
-	in_fd = -1;
-	out_fd = -1;
+	in_fd = -2;
+	out_fd = -2;
 	data->pids[data->child_idx] = fork();
 	pid = data->pids[data->child_idx];
 	if (pid == 0)
 	{
 		stdoutfd = dup(STDOUT_FILENO);
 
-		if (data->cmd.rd_pipe != -1 && in_fd == -1)
+		if (data->cmd.rd_pipe != -1 && in_fd < 0)
 		{
+			fprintf(stderr, "pipe rd : %d child: %d\n", data->cmd.rd_pipe, data->child_idx);
 			dup2(data->cmd.rd_pipe, STDIN_FILENO);
 			// close(data->cmd.rd_pipe);
 
 		}
-		if (data->cmd.wr_pipe != -1 && out_fd == -1)
+		if (data->cmd.wr_pipe != -1 && out_fd < 0)
 		{
+			// fprintf(stderr, "write : %d\n", data->cmd.wr_pipe);
+			fprintf(stderr, "pipe wr : %d child: %d\n", data->cmd.wr_pipe, data->child_idx);
 			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
 			// close(data->cmd.wr_pipe);
 		}
@@ -179,7 +182,8 @@ void	execute_cmd(t_ast *node, t_data *data)
 			i = 0;
 			while (i < data->io.in_size)
 			{
-				if (data->io.infile_list[i].type == CHAR_LESSER)
+				// if (data->io.infile_list[i].type == CHAR_LESSER)
+				if (data->io.infile_list[i].type == CHAR_LESSER && data->io.infile_list[i].idx == data->child_idx)
 				{
 					if (in_fd != -1)
 						close(in_fd);
@@ -201,31 +205,39 @@ void	execute_cmd(t_ast *node, t_data *data)
 			i = 0;
 			while (i < data->io.out_size)
 			{
-				if (out_fd != -1)
-					close(out_fd);
+				// fprintf(stderr, "here %d %d %s\n", data->child_idx, i,data->io.outfile_list[i].name);
+				// fprintf(stderr,"out: %d %d %s \n", data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
+				// fprintf(stderr,"out: %d %d %s \n", data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
 				if (data->io.outfile_list[i].type == CHAR_GREATER && data->io.outfile_list[i].idx == data->child_idx)
+				{
+					if (out_fd > -1)
+						close(out_fd);
 					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+				}
 				else if (data->io.outfile_list[i].type == CHAR_APPEND)
+				{
+					if (out_fd > -1)
+						close(out_fd);
 					out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+				}
 				if (out_fd == -1)
 				{
 					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
 					exit(EXIT_FAILURE);
 				}
-				// printf("OUTFILE: %s i:%d idx:%d\n", data->io.outfile_list[i].name, i, data->io.outfile_list[i].idx);
 				i++;
 			}
+			fprintf(stderr, "fdout : %d child: %d\n", out_fd, data->child_idx);
 			dup2(out_fd, STDOUT_FILENO);
 			// close(out_fd);
 		}
 
-		// if (data->cmd.rd_pipe != -1 && in_fd == -1)
+		// if (data->cmd.rd_pipe != -1 && in_fd < 0)
 		// {
 		// 	dup2(data->cmd.rd_pipe, STDIN_FILENO);
 		// 	// close(data->cmd.rd_pipe);
-		//
 		// }
-		// if (data->cmd.wr_pipe != -1 && out_fd == -1)
+		// if (data->cmd.wr_pipe != -1 && out_fd < 0)
 		// {
 		// 	dup2(data->cmd.wr_pipe, STDOUT_FILENO);
 		// 	// close(data->cmd.wr_pipe);
@@ -233,6 +245,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 
 		if (data->cmd.cmd == NULL)
 			err_exit(EXIT_FAILURE, data);
+		fprintf(stderr,"here in %d %d\n", data->child_idx, STDOUT_FILENO);
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{
 			dup2(stdoutfd, STDOUT_FILENO);

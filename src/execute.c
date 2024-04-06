@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 15:20:46 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/06 18:26:51 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	execute_pipe(t_ast *node, t_data *data)
 	pipe(pipe_fd);
 	wr_pipe = pipe_fd[1];
 	rd_pipe = pipe_fd[0];
-	execute_cmdpath(node->left, data, -1, wr_pipe);
+	execute_cmdpath(node->left, data, 0, wr_pipe);
 	next_node = node->right;
 	while (next_node != NULL && NODETYPE(next_node->type) == NODE_PIPE)
 	{
@@ -58,9 +58,8 @@ void	execute_pipe(t_ast *node, t_data *data)
 	close(rd_pipe);
 }
 
-void	execute_job(t_ast *node, t_data *data, bool async)
+void	execute_job(t_ast *node, t_data *data)
 {
-	(void)async;
 	if (node == NULL)
 		return ;
 	if (NODETYPE(node->type) == NODE_PIPE)
@@ -109,6 +108,6 @@ void	execute_tree(t_data *data)
 {
 	init_pids(data);
 	data->child_idx = 0;
-	execute_job(data->ast, data, false);
+	execute_job(data->ast, data);
 	run_parent(data);
 }
