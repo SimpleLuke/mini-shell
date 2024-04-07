@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:10:04 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 15:20:54 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,18 +203,18 @@ void	execute_cmd(t_ast *node, t_data *data)
 						exit(EXIT_FAILURE);
 					}
 				}
-				// else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
-				// {
-				// 	if (data->in_fd != -1)
-				// 		close(data->in_fd);
-				// 	create_heredoc(data, data->io.infile_list[i]);
-				// 	data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
-				// 	if (data->in_fd == -1)
-				// 	{
-				// 		print_err("here_doc", strerror(errno), EXIT_FAILURE);
-				// 	}
-				// 	data->heredoc = true;
-				// }
+				else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
+				{
+					if (data->in_fd != -1)
+						close(data->in_fd);
+					create_heredoc(data, data->io.infile_list[i]);
+					data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
+					if (data->in_fd == -1)
+					{
+						print_err("here_doc", strerror(errno), EXIT_FAILURE);
+					}
+					data->heredoc = true;
+				}
 				i++;
 			}
 			dup2(data->in_fd, STDIN_FILENO);
@@ -278,7 +278,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 		perror("fork");
 		return ;
 	}
-		fprintf(stderr,"here\n");
+		// fprintf(stderr,"here\n");
 	data->child_idx++;
 	// while (waitpid(pid, NULL, 0) <= 0);
 	return ;

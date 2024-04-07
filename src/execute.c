@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:13:46 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 15:20:03 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ void	run_parent(t_data *data)
 			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
 				data->exit_code = WEXITSTATUS(status);
 	}
-	// if (data->heredoc)
-	// 	unlink(".temp_heredoc");
+	if (data->heredoc)
+		unlink(".temp_heredoc");
 	// fprintf(stderr,"here\n");
 }
 
