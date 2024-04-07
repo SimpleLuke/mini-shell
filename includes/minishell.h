@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 20:30:47 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 14:31:51 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,5 +202,8 @@ void	free_cmd(t_data *data);
 // error.c
 int		print_err(char *msg1, char *msg2, int errstate);
 void	err_exit(int errstate, t_data *data);
+
+// close.c
+void	close_fds(t_data *data);
 
 #endif // !MINISHELL_H

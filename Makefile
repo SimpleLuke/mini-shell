@@ -11,7 +11,8 @@ SRC = src/main.c \
 	  src/expander.c \
 	  src/execute.c \
 	  src/cmd.c \
-	  src/error.c
+	  src/error.c \
+	  src/close.c
 OBJ = $(SRC:src/%c=$(BIN)/%o)
 INCS = ./includes
 LIBFT_PATH = libft

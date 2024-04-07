@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 17:41:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 20:30:15 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 14:35:55 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ void	close_fds(t_data *data)
 
 static void	close_pipes(t_data *data)
 {
-	int	i;
-
-	i = -1;
-	while (++i < (data->cmd_count - 1) * 2)
-		close(data->pipes[i]);
+	close(data->pipe_fd[0]);
+	close(data->pipe_fd[1]);
 }

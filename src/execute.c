@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 20:31:19 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 14:37:38 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,15 +95,16 @@ void	run_parent(t_data *data)
 	int	wpid;
 	int	status;
 
+	close_fds(data);
 	while (--data->child_idx >= 0)
 	{
 		wpid = waitpid(data->pids[data->child_idx], &status, 0);
-		fprintf(stderr, "wpid: %d\n", wpid);
+		// fprintf(stderr, "wpid: %d\n", wpid);
 		if (wpid == data->pids[data->cmd_count - 1])
 			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
 				data->exit_code = WEXITSTATUS(status);
 	}
-	fprintf(stderr,"here\n");
+	// fprintf(stderr,"here\n");
 }
 
 void	execute_tree(t_data *data)
