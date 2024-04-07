@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 17:33:03 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:12:45 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 18:31:40 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	set_signals_interactive(void)
 void	signal_print_newline(int signal)
 {
 	(void)signal;
+	write(1, "\n", 1);
 	rl_on_new_line();
 }
 

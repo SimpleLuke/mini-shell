@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:52:45 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:28:03 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 18:41:07 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,11 @@ void	create_heredoc(t_data *data, t_infile infile)
 		// line = readline("> ");
 		// set_signals_noninteractive();
 		if (line == NULL)
+		{
+			write(1, "\n", 1);
+			ft_putstr_fd("warning: here-document delimited by end-of-file\n", data->std_out);
 			break ;
+		}
 		if (ft_strlen(line) == ft_strlen(infile.name) + 1
 			&& !ft_strncmp(line, infile.name, ft_strlen(infile.name)))
 			is_open = close(stdin_dup);
