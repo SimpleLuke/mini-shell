@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 14:37:38 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 15:13:46 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	execute_job(t_ast *node, t_data *data)
 		return ;
 	if (NODETYPE(node->type) == NODE_PIPE)
 	{
+		data->pipe = true;
 		execute_pipe(node, data);
 	}
 	else if (NODETYPE(node->type) == NODE_CMDPATH)
@@ -104,6 +105,8 @@ void	run_parent(t_data *data)
 			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
 				data->exit_code = WEXITSTATUS(status);
 	}
+	// if (data->heredoc)
+	// 	unlink(".temp_heredoc");
 	// fprintf(stderr,"here\n");
 }
 

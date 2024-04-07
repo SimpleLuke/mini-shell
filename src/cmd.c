@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 14:35:28 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 15:10:04 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 		print_err(data->cmd.cmd_args[0], "command not found", EXIT_FAILURE);
 	data->cmd.rd_pipe = rd_pipe;
 	data->cmd.wr_pipe = wr_pipe;
+	data->in_fd = -2;
+	data->out_fd = -2;
 	// print_strarr(data->cmd.cmd_args);
 	return (0);
 }
@@ -154,8 +156,6 @@ void	execute_cmd(t_ast *node, t_data *data)
 		return ;
 	// built in tbc
 
-	data->in_fd = -2;
-	data->out_fd = -2;
 	data->pids[data->child_idx] = fork();
 	pid = data->pids[data->child_idx];
 	// fprintf(stderr,"child idx: %d pid: %d\n", data->child_idx, pid);
@@ -203,6 +203,18 @@ void	execute_cmd(t_ast *node, t_data *data)
 						exit(EXIT_FAILURE);
 					}
 				}
+				// else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
+				// {
+				// 	if (data->in_fd != -1)
+				// 		close(data->in_fd);
+				// 	create_heredoc(data, data->io.infile_list[i]);
+				// 	data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
+				// 	if (data->in_fd == -1)
+				// 	{
+				// 		print_err("here_doc", strerror(errno), EXIT_FAILURE);
+				// 	}
+				// 	data->heredoc = true;
+				// }
 				i++;
 			}
 			dup2(data->in_fd, STDIN_FILENO);
@@ -223,7 +235,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 						close(data->out_fd);
 					data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 				}
-				else if (data->io.outfile_list[i].type == CHAR_APPEND)
+				else if (data->io.outfile_list[i].type == CHAR_APPEND && data->io.outfile_list[i].idx == data->child_idx)
 				{
 					if (data->out_fd > -1)
 						close(data->out_fd);
@@ -266,6 +278,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 		perror("fork");
 		return ;
 	}
+		fprintf(stderr,"here\n");
 	data->child_idx++;
 	// while (waitpid(pid, NULL, 0) <= 0);
 	return ;
