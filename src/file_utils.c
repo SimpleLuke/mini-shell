@@ -6,15 +6,27 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:52:45 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 17:12:15 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 18:28:03 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdlib.h>
+
+void	heredoc_signint_handler(int signum)
+{
+	(void)signum;
+	// ioctl(0, TIOCSTI, "\n");
+	write(1, "\n", 1);
+	rl_on_new_line();
+}
 
 void	process_heredoc(t_data *data)
 {
 	int	i;
+	int	pid;
+	int	wpid;
+	int	status;
 
 	i = 0;
 	if (data->io.in_size)
@@ -26,7 +38,22 @@ void	process_heredoc(t_data *data)
 			{
 				if (data->in_fd != -1)
 					close(data->in_fd);
-				create_heredoc(data, data->io.infile_list[i]);
+				pid = fork();
+				if (pid == 0)
+				{
+					create_heredoc(data, data->io.infile_list[i]);
+				}
+				else if (pid < 0)
+				{
+					perror("fork");
+					return ;
+				}
+				else
+				{
+					wpid = waitpid(pid, &status, 0);
+					data->heredoc_code = WEXITSTATUS(status);
+					// fprintf(stderr, "code: %d\n", data->heredoc_code);
+				}
 				data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
 				if (data->in_fd == -1)
 				{
@@ -60,9 +87,12 @@ void	create_heredoc(t_data *data, t_infile infile)
 	is_open = 1;
 	while (true)
 	{
+		// set_signals_interactive();
 		if (is_open)
 			ft_putstr_fd("> ", data->std_out);
 		line = get_next_line(stdin_dup);
+		// line = readline("> ");
+		// set_signals_noninteractive();
 		if (line == NULL)
 			break ;
 		if (ft_strlen(line) == ft_strlen(infile.name) + 1
@@ -73,4 +103,5 @@ void	create_heredoc(t_data *data, t_infile infile)
 		ft_free((void **)&line);
 	}
 	close(fd);
+	exit(EXIT_SUCCESS);
 }

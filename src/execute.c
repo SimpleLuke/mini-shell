@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 17:05:14 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 18:25:50 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void	execute_tree(t_data *data)
 	init_pids(data);
 	data->child_idx = 0;
 	process_heredoc(data);
-	execute_job(data->ast, data);
+	if (!data->heredoc_code)
+		execute_job(data->ast, data);
 	run_parent(data);
 }

@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 16:17:30 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 18:24:34 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+#include <sys/ioctl.h>
 
 # define MAXCOM 1000
 # define MAXLIST 100
@@ -154,6 +155,7 @@ typedef struct s_data
 	int		pipe_fd[2];
 	bool	pipe;
 	bool	heredoc;
+	int		heredoc_code;
 }	t_data;
 
 void	ignore_control_key(void);
@@ -213,6 +215,10 @@ void	close_fds(t_data *data);
 // file_utils.c
 void	create_heredoc(t_data *data, t_infile infile);
 void	process_heredoc(t_data *data);
+
+// signal.c
+void	set_signals_interactive(void);
+void	set_signals_noninteractive(void);
 
 
 #endif // !MINISHELL_H
