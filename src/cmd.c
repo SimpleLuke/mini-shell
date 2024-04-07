@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:20:54 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 16:42:58 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,6 @@ int	execute_builtins(t_ast *node, t_data *data)
 void	execute_cmd(t_ast *node, t_data *data)
 {
 	pid_t	pid;
-	int		stdoutfd;
 	// int		data->in_fd;
 	// int		data->out_fd;
 	int		i;
@@ -161,8 +160,6 @@ void	execute_cmd(t_ast *node, t_data *data)
 	// fprintf(stderr,"child idx: %d pid: %d\n", data->child_idx, pid);
 	if (pid == 0)
 	{
-		stdoutfd = dup(STDOUT_FILENO);
-
 		if (data->cmd.rd_pipe != -1 && data->in_fd < 0)
 		{
 			// fprintf(stderr, "pipe rd : %d child: %d\n", data->cmd.rd_pipe, data->child_idx);
@@ -203,18 +200,19 @@ void	execute_cmd(t_ast *node, t_data *data)
 						exit(EXIT_FAILURE);
 					}
 				}
-				else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
-				{
-					if (data->in_fd != -1)
-						close(data->in_fd);
-					create_heredoc(data, data->io.infile_list[i]);
-					data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
-					if (data->in_fd == -1)
-					{
-						print_err("here_doc", strerror(errno), EXIT_FAILURE);
-					}
-					data->heredoc = true;
-				}
+				// else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
+				// {
+				// 	if (data->in_fd != -1)
+				// 		close(data->in_fd);
+				// 	create_heredoc(data, data->io.infile_list[i]);
+				// 	data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
+				// 	if (data->in_fd == -1)
+				// 	{
+				// 		print_err("here_doc", strerror(errno), EXIT_FAILURE);
+				// 	}
+				// 	data->heredoc = true;
+				// 	data->io.infile_list[i].type = CHAR_LESSER;
+				// }
 				i++;
 			}
 			dup2(data->in_fd, STDIN_FILENO);
@@ -269,7 +267,7 @@ void	execute_cmd(t_ast *node, t_data *data)
 		// fprintf(stderr,"here in %d %d\n", data->child_idx, STDOUT_FILENO);
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{
-			dup2(stdoutfd, STDOUT_FILENO);
+			dup2(data->std_out, STDOUT_FILENO);
 			err_exit(print_err(data->cmd.cmd_args[0], strerror(errno), EXIT_FAILURE), data);
 		}
 	}

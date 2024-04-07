@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 17:41:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:13:04 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 16:07:14 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@ static void	close_pipes(t_data *data)
 	{
 		close(data->pipe_fd[0]);
 		close(data->pipe_fd[1]);
+		close(data->std_in);
+		close(data->std_out);
 	}
 }

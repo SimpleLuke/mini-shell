@@ -6,11 +6,12 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:13:17 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 16:04:46 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <unistd.h>
 
 void	print_strarr(char **arr)
 {
@@ -83,6 +84,8 @@ void	init_data(t_data *data)
 	data->cmd_count = 0;
 	data->heredoc = false;
 	data->pipe = false;
+	data->std_in = dup(STDIN_FILENO);
+	data->std_out = dup(STDOUT_FILENO);
 }
 
 int	main(int argc, char **argv, char **envp)

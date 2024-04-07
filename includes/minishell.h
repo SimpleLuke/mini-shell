@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 15:13:10 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 16:17:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,8 @@ typedef struct s_data
 	int		exit_code;
 	int		in_fd;
 	int		out_fd;
+	int		std_in;
+	int		std_out;
 	int		pipe_fd[2];
 	bool	pipe;
 	bool	heredoc;
@@ -210,6 +212,7 @@ void	close_fds(t_data *data);
 
 // file_utils.c
 void	create_heredoc(t_data *data, t_infile infile);
+void	process_heredoc(t_data *data);
 
 
 #endif // !MINISHELL_H
