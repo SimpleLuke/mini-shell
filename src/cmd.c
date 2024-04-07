@@ -6,11 +6,12 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:27:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 20:39:16 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/fcntl.h>
@@ -106,10 +107,54 @@ char	**get_cmd_args(t_ast *node)
 	return (result);
 }
 
+bool	isbuiltins(t_ast *node)
+{
+	int	len;
+
+	len = ft_strlen(node->data);
+	
+	if ((len == 4 && !ft_strncmp(node->data, "echo", 4)) 
+		|| (len == 3 && !ft_strncmp(node->data, "pwd", 3))
+		|| (len == 2 && !ft_strncmp(node->data, "cd", 2))
+		|| (len == 3 && !ft_strncmp(node->data, "env", 3))
+		|| (len == 5 && !ft_strncmp(node->data, "unset", 5))
+		|| (len == 5 && !ft_strncmp(node->data, "export", 5))
+		|| (len == 5 && !ft_strncmp(node->data, "exit", 5)))
+	{
+		return (true);
+	}
+	return (false);
+}
+
+bool	isbuiltins_in_parent(t_ast *node)
+{
+	int	len;
+
+	len = ft_strlen(node->data);
+	
+	if ((len == 2 && !ft_strncmp(node->data, "cd", 2))
+		// (len == 4 && !ft_strncmp(node->data, "echo", 4)) 
+		// || (len == 3 && !ft_strncmp(node->data, "pwd", 3))
+		// || (len == 3 && !ft_strncmp(node->data, "env", 3))
+		// || (len == 5 && !ft_strncmp(node->data, "unset", 5))
+		// || (len == 5 && !ft_strncmp(node->data, "export", 5))
+		// || (len == 5 && !ft_strncmp(node->data, "exit", 5))
+	)
+	{
+		return (true);
+	}
+	return (false);
+}
+
 int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
 	data->cmd.cmd_args = get_cmd_args(node);
-	data->cmd.cmd = get_cmd(node->data, data);
+	if (!isbuiltins(node))
+		data->cmd.cmd = get_cmd(node->data, data);
+	else
+	{
+		data->cmd.cmd = ft_strdup(node->data);
+	}
 	if (!data->cmd.cmd)
 		print_err(data->cmd.cmd_args[0], "command not found", EXIT_FAILURE);
 	data->cmd.rd_pipe = rd_pipe;
@@ -129,7 +174,7 @@ void	free_cmd(t_data *data)
 	data->cmd.wr_pipe = -1;
 }
 
-int	execute_builtins(t_ast *node, t_data *data)
+int	execute_builtins_redirect(t_ast *node, t_data *data)
 {
 	if (ft_strlen(node->data) == ft_strlen("echo") && ft_strncmp(node->data, "echo", 4) == 0)
 	{
@@ -139,6 +184,34 @@ int	execute_builtins(t_ast *node, t_data *data)
 			echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
 		else
 			echo(false, "");
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("pwd") && ft_strncmp(node->data, "pwd", 3) == 0)
+	{
+		pwd();
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("cd") && ft_strncmp(node->data, "cd", 2) == 0)
+	{
+		if (node->right != NULL)
+		{
+			cd(node->right->data);
+		}
+		return (1);
+	}
+	return (0);
+}
+
+int	execute_builtins_in_parent(t_ast *node, t_data *data)
+{
+	(void)data;
+	(void)node;
+	if (ft_strlen(node->data) == ft_strlen("cd") && ft_strncmp(node->data, "cd", 2) == 0)
+	{
+		if (node->right != NULL)
+		{
+			cd(node->right->data);
+		}
 		return (1);
 	}
 	return (0);
@@ -151,8 +224,6 @@ void	execute_cmd(t_ast *node, t_data *data)
 	// int		data->out_fd;
 	int		i;
 	// check built-ins
-	if (execute_builtins(node, data))
-		return ;
 	// built in tbc
 
 	data->pids[data->child_idx] = fork();
@@ -264,6 +335,9 @@ void	execute_cmd(t_ast *node, t_data *data)
 		close_fds(data);
 		if (data->cmd.cmd == NULL)
 			err_exit(EXIT_FAILURE, data);
+		if (execute_builtins_redirect(node, data))
+			exit(EXIT_SUCCESS) ;
+
 		// fprintf(stderr,"here in %d %d\n", data->child_idx, STDOUT_FILENO);
 		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
 		{

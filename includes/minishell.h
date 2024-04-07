@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:24:34 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 20:38:09 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,10 @@ void	execute_tree(t_data *data);
 int		init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe);
 void	execute_cmd(t_ast *node, t_data *data);
 void	free_cmd(t_data *data);
+int		execute_builtins(t_ast *node, t_data *data);
+int		execute_builtins_in_parent(t_ast *node, t_data *data);
+bool	isbuiltins(t_ast *node);
+bool	isbuiltins_in_parent(t_ast *node);
 
 // error.c
 int		print_err(char *msg1, char *msg2, int errstate);

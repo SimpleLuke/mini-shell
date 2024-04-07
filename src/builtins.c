@@ -6,14 +6,13 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 15:11:26 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 20:00:57 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <errno.h>
-// #include <linux/limits.h>
-#include <limits.h>
+#include <linux/limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

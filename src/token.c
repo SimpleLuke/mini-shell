@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/04/03 14:48:50 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 20:04:18 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
@@ -462,7 +462,7 @@ char	*convert_token(char *token, t_data *data)
 		}
 		tker.i++;
 	}
-	print_node(head);
+	// print_node(head);
 	// (void)data;
 	expanded_list(head, data);
 	// printf("AFTER=============\n");

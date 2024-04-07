@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:25:50 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/07 20:38:27 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 void	execute_simple_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
+	// if (execute_builtins(node, data))
+	// 	return ;
 	init_cmd(node, data, rd_pipe, wr_pipe);
 	execute_cmd(node, data);
 	free_cmd(data);
@@ -54,7 +56,7 @@ void	execute_pipe(t_ast *node, t_data *data)
 		next_node = next_node->right;
 	}
 	rd_pipe = data->pipe_fd[0];
-	fprintf(stderr, "rd_pipe: %d\n", rd_pipe);
+	// fprintf(stderr, "rd_pipe: %d\n", rd_pipe);
 	close(wr_pipe);
 	execute_cmdpath(next_node, data, rd_pipe, 1);
 	close(rd_pipe);
@@ -71,6 +73,11 @@ void	execute_job(t_ast *node, t_data *data)
 	}
 	else if (NODETYPE(node->type) == NODE_CMDPATH)
 	{
+		if (isbuiltins_in_parent(node))
+		{
+			execute_builtins_in_parent(node, data);
+			return ;
+		}
 		execute_cmdpath(node, data, -1, -1);
 	}
 }
