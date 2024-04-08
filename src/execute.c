@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 20:38:27 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 18:43:23 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,16 @@ void	run_parent(t_data *data)
 	while (--data->child_idx >= 0)
 	{
 		wpid = waitpid(data->pids[data->child_idx], &status, 0);
-		// fprintf(stderr, "wpid: %d\n", wpid);
-		if (wpid == data->pids[data->cmd_count - 1])
-			if ((data->child_idx == (data->cmd_count - 1)) && WIFEXITED(status))
+		// fprintf(stderr, "wpid: %d pid:%d\n", wpid, data->pids[data->child_idx]);
+		if (wpid == data->pids[data->child_idx])
+		{
+			if (WIFEXITED(status))
+			{
 				data->exit_code = WEXITSTATUS(status);
+				// fprintf(stderr, "code: %d\n", data->exit_code);
+
+			}
+		}
 	}
 	if (data->heredoc)
 		unlink(".temp_heredoc");

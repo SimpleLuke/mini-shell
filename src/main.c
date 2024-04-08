@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:15:59 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 17:43:23 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	init_data(t_data *data)
 	data->std_in = dup(STDIN_FILENO);
 	data->std_out = dup(STDOUT_FILENO);
 	data->heredoc_code = 0;
+	data->exit_status = -1;
 }
 
 int	main(int argc, char **argv, char **envp)

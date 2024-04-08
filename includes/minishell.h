@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:32:21 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 17:43:07 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ typedef struct s_data
 	bool	pipe;
 	bool	heredoc;
 	int		heredoc_code;
+	int		exit_status;
 }	t_data;
 
 void	ignore_control_key(void);
