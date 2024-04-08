@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:53:21 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 20:39:16 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 17:34:09 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,8 @@ bool	isbuiltins(t_ast *node)
 		|| (len == 2 && !ft_strncmp(node->data, "cd", 2))
 		|| (len == 3 && !ft_strncmp(node->data, "env", 3))
 		|| (len == 5 && !ft_strncmp(node->data, "unset", 5))
-		|| (len == 5 && !ft_strncmp(node->data, "export", 5))
-		|| (len == 5 && !ft_strncmp(node->data, "exit", 5)))
+		|| (len == 6 && !ft_strncmp(node->data, "export", 6))
+		|| (len == 4 && !ft_strncmp(node->data, "exit", 4)))
 	{
 		return (true);
 	}
@@ -131,14 +131,13 @@ bool	isbuiltins_in_parent(t_ast *node)
 	int	len;
 
 	len = ft_strlen(node->data);
-	
 	if ((len == 2 && !ft_strncmp(node->data, "cd", 2))
 		// (len == 4 && !ft_strncmp(node->data, "echo", 4)) 
 		// || (len == 3 && !ft_strncmp(node->data, "pwd", 3))
 		// || (len == 3 && !ft_strncmp(node->data, "env", 3))
-		// || (len == 5 && !ft_strncmp(node->data, "unset", 5))
-		// || (len == 5 && !ft_strncmp(node->data, "export", 5))
-		// || (len == 5 && !ft_strncmp(node->data, "exit", 5))
+		|| (len == 5 && !ft_strncmp(node->data, "unset", 5))
+		|| (len == 6 && !ft_strncmp(node->data, "export", 6))
+		|| (len == 4 && !ft_strncmp(node->data, "exit", 4))
 	)
 	{
 		return (true);
@@ -199,6 +198,33 @@ int	execute_builtins_redirect(t_ast *node, t_data *data)
 		}
 		return (1);
 	}
+	else if (ft_strlen(node->data) == ft_strlen("env") && ft_strncmp(node->data, "env", 3) == 0)
+	{
+		env(data->env_list);
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("export") && ft_strncmp(node->data, "export", 6) == 0)
+	{
+		if (node->right != NULL)
+		{
+			// fprintf(stderr, "%s\n", node->right->data);
+			export_var(node->right->data, data);
+		}
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("exit") && ft_strncmp(node->data, "exit", 4) == 0)
+	{
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("unset") && ft_strncmp(node->data, "unset", 5) == 0)
+	{
+		if (node->right != NULL)
+		{
+			// fprintf(stderr, "%s\n", node->right->data);
+			unset_env(node->right->data, data);
+		}
+		return (1);
+	}
 	return (0);
 }
 
@@ -211,6 +237,29 @@ int	execute_builtins_in_parent(t_ast *node, t_data *data)
 		if (node->right != NULL)
 		{
 			cd(node->right->data);
+		}
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("export") && ft_strncmp(node->data, "export", 6) == 0)
+	{
+		if (node->right != NULL)
+		{
+			// fprintf(stderr, "%s\n", node->right->data);
+			export_var(node->right->data, data);
+		}
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("exit") && ft_strncmp(node->data, "exit", 4) == 0)
+	{
+		exit_shell();
+		return (1);
+	}
+	else if (ft_strlen(node->data) == ft_strlen("unset") && ft_strncmp(node->data, "unset", 5) == 0)
+	{
+		if (node->right != NULL)
+		{
+			// fprintf(stderr, "%s\n", node->right->data);
+			unset_env(node->right->data, data);
 		}
 		return (1);
 	}

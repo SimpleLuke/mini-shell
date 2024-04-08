@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 20:38:09 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 17:32:21 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,10 @@ void	pwd(void);
 void	echo(bool newline, char *str);
 int		cd(char *arg);
 void	env(char **envp);
-void	export_var(char *arg, char ***env_list);
-void	unset_env(char *arg, char ***env_list);
+// void	export_var(char *arg, char ***env_list);
+void	export_var(char *arg, t_data *data);
+// void	unset_env(char *arg, char ***env_list);
+void	unset_env(char *arg, t_data *data);
 void	exit_shell(void);
 int		exist_var(char *arg, char *str, int *is_exist);
 char	*get_envvar(char *arg, t_data *data);

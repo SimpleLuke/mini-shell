@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 20:00:57 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/08 17:31:37 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,8 @@ int	exist_var(char *arg, char *str, int *is_exist)
 	return (0);
 }
 
-void	export_var(char *arg, char ***env_list)
+// void	export_var(char *arg, char ***env_list)
+void	export_var(char *arg, t_data *data)
 {
 	char	**tmp;
 	char	*value;
@@ -147,15 +148,15 @@ void	export_var(char *arg, char ***env_list)
 	int		i;
 	int		is_exist;
 
-	count = count_envlist(*env_list);
+	count = count_envlist(data->env_list);
 	tmp = malloc((count + 2) * sizeof(char **));
 	i = 0;
-	while ((*env_list)[i] != NULL)
+	while ((data->env_list)[i] != NULL)
 	{
-		if (exist_var(arg, (*env_list)[i], &is_exist))
+		if (exist_var(arg, (data->env_list)[i], &is_exist))
 			tmp[i] = ft_strdup(arg);
 		else
-			tmp[i] = ft_strdup((*env_list)[i]);
+			tmp[i] = ft_strdup((data->env_list)[i]);
 		i++;
 	}
 	if (!is_exist)
@@ -172,13 +173,13 @@ void	export_var(char *arg, char ***env_list)
 	else
 		tmp[i] = NULL;
 	i = 0;
-	while ((*env_list)[i] != NULL)
+	while ((data->env_list)[i] != NULL)
 	{
-		free((*env_list)[i]);
+		free((data->env_list)[i]);
 		i++;
 	}
-	free(*env_list);
-	*env_list = tmp;
+	free(data->env_list);
+	data->env_list = tmp;
 }
 
 void	env(char **env_list)
@@ -193,7 +194,7 @@ void	env(char **env_list)
 	}
 }
 
-void	unset_env(char *arg, char ***env_list)
+void	unset_env(char *arg, t_data *data)
 {
 	int	i;
 	int	j;
@@ -203,26 +204,26 @@ void	unset_env(char *arg, char ***env_list)
 
 	i = 0;
 	j = 0;
-	count = count_envlist(*env_list);
+	count = count_envlist(data->env_list);
 	tmp = malloc((count + 2) * sizeof(char **));
-	while ((*env_list)[i] != NULL)
+	while ((data->env_list)[i] != NULL)
 	{
-		if (!exist_var(arg, (*env_list)[i], &is_exist))
+		if (!exist_var(arg, (data->env_list)[i], &is_exist))
 		{
-			tmp[j] = ft_strdup((*env_list)[i]);
+			tmp[j] = ft_strdup((data->env_list)[i]);
 			j++;
 		}
 		i++;
 	}
 	tmp[j] = NULL;
 	i = 0;
-	while ((*env_list)[i] != NULL)
+	while ((data->env_list)[i] != NULL)
 	{
-		free((*env_list)[i]);
+		free((data->env_list)[i]);
 		i++;
 	}
-	free(*env_list);
-	*env_list = tmp;
+	free(data->env_list);
+	data->env_list = tmp;
 }
 
 void	exit_shell(void)
