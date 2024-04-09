@@ -6,16 +6,13 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 17:33:03 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:31:40 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 11:11:17 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 
-/* ignore_sigquit:
-*	Replaces SIGQUIT signals (ctrl-\) with SIG_IGN to ignore
-*	the signal.
-*/
 void	ignore_sigquit(void)
 {
 	struct sigaction	act;
@@ -25,9 +22,6 @@ void	ignore_sigquit(void)
 	sigaction(SIGQUIT, &act, NULL);
 }
 
-/* signal_reset_prompt:
-*	Resets the readline user input prompt for interactive signal handling.
-*/
 void	signal_reset_prompt(int signo)
 {
 	(void)signo;
@@ -37,13 +31,6 @@ void	signal_reset_prompt(int signo)
 	rl_redisplay();
 }
 
-/* set_signals_interactive:
-*	Sets the behavior in response to SIGINT (ctrl-c) and SIGQUIT (ctrl-\).
-*	SIGINT resets the user input prompt to a new blank line.
-*	SIGQUIT is ignored.
-*	Used when minishell is in interactive mode, meaning it is awaiting
-*	user input.
-*/
 void	set_signals_interactive(void)
 {
 	struct sigaction	act;
@@ -54,23 +41,14 @@ void	set_signals_interactive(void)
 	sigaction(SIGINT, &act, NULL);
 }
 
-/* signal_print_newline:
-*	Prints a newline for noninteractive signal handling.
-*/
 void	signal_print_newline(int signal)
 {
-	(void)signal;
+	if (signal == 3)
+		write(1, "Quit(core dumped)", 17);
 	write(1, "\n", 1);
 	rl_on_new_line();
 }
 
-/* set_signals_noninteractive:
-*	Sets the behavior in response to SIGINT (ctrl -c) and SIGQUIT (ctrl -\).
-*	Used when minishell is in noninteractive mode, meaning it is not awaiting
-*	user input. For example, when a command is running (i.e. cat), minishell
-*	should not react to SIGINT and SIGQUIT because only the running process (cat)
-*	needs to react to those signals.
-*/
 void	set_signals_noninteractive(void)
 {
 	struct sigaction	act;

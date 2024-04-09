@@ -1,5 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
+/* ************************************************************************** */ /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
@@ -32,14 +31,15 @@ char	*get_cmd(char *cmd, t_data *data)
 		return (ft_strdup(cmd));
 	env_list = get_env_list(data);
 	i = -1;
-	while (env_list[++i])
+	while (env_list && env_list[++i])
 	{
 		cmd_path = ft_strjoin(env_list[i], cmd);
 		if (access(cmd_path, F_OK | X_OK) == 0)
 			break ;
 		ft_free((void **)&cmd_path);
 	}
-	ft_free_strarr(&env_list);
+	if (env_list)
+		ft_free_strarr(&env_list);
 	return (cmd_path);
 }
 
@@ -51,6 +51,7 @@ char	**get_env_list(t_data *data)
 
 	i = -1;
 	path = NULL;
+	env_list = NULL;
 	while (data->env_list[++i])
 	{
 		if (!ft_strncmp("PATH=", data->env_list[i], 5))
@@ -59,8 +60,11 @@ char	**get_env_list(t_data *data)
 			break ;
 		}
 	}
-	env_list = ft_split(path, ':');
-	format_list(env_list);
+	if (path)
+	{
+		env_list = ft_split(path, ':');
+		format_list(env_list);
+	}
 	return (env_list);
 }
 
@@ -177,8 +181,10 @@ int	execute_builtins_redirect(t_ast *node, t_data *data)
 {
 	if (ft_strlen(node->data) == ft_strlen("echo") && ft_strncmp(node->data, "echo", 4) == 0)
 	{
-		if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
+		if (arrlen(data->cmd.cmd_args) > 2 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
 			echo(true, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
+		else if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
+			echo(true, NULL);
 		else if (arrlen(data->cmd.cmd_args) > 1)
 			echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
 		else
@@ -277,6 +283,11 @@ void	execute_cmd(t_ast *node, t_data *data)
 
 	data->pids[data->child_idx] = fork();
 	pid = data->pids[data->child_idx];
+	// if (pid > 0)
+	// {
+	// 	// fprintf(stderr, "idx: %d\n", data->child_idx);
+	// 	data->child_idx++;
+	// }
 	// fprintf(stderr,"child idx: %d pid: %d\n", data->child_idx, pid);
 	if (pid == 0)
 	{

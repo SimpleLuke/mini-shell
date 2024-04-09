@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 20:04:18 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 11:14:54 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
@@ -262,8 +262,8 @@ void	expand_node(t_list *tk_list)
 	while (tk_list != NULL)
 	{
 		data = (t_token *)tk_list->content;
-		printf("type: %d\n", data->type);
-		printf("data: %s\n", data->data);
+		// printf("type: %d\n", data->type);
+		// printf("data: %s\n", data->data);
 		tk_list = tk_list->next;
 	}
 }
@@ -494,7 +494,7 @@ char	*convert_dqtoken(char *token, t_data *data)
 	{
 		tker.chtype = getchartype(token[tker.i]);
 		// printf("%s\n", token);
-		printf("%c\n", token[tker.i]);
+		// printf("%c\n", token[tker.i]);
 		if (tker.state == STATE_GENERAL)
 		{
 			if (tker.chtype == CHAR_DOLLAR)
@@ -530,7 +530,7 @@ char	*convert_dqtoken(char *token, t_data *data)
 		}
 		tker.i++;
 	}
-	print_node(head);
+	// print_node(head);
 	// (void)data;
 	expanded_dqlist(head, data);
 	// printf("AFTER=============\n");
@@ -540,7 +540,7 @@ char	*convert_dqtoken(char *token, t_data *data)
 	while (head)
 	{
 		node = head->content;
-		printf("Heyy %s\n", node->data);
+		// printf("Heyy %s\n", node->data);
 		if (node->data)
 			result = ft_strjoin_gnl(result, node->data, ft_strlen(node->data));
 		head = head->next;

@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:56:42 by llai              #+#    #+#             */
-/*   Updated: 2024/03/26 18:02:46 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 11:32:34 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ void	ft_free_strarr(char ***arr)
 	while ((*arr)[i] != NULL)
 	{
 		free((*arr)[i]);
+		(*arr)[i] = NULL;
 		i++;
 	}
 	free(*arr);
+	*arr = NULL;
 }
 
 void	ft_lstdelone2(t_list *lst, void (*del)(void **))

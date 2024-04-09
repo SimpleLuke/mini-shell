@@ -1,16 +1,14 @@
-total 132
-drwxr-xr-x  7 llai 2023_london    195 Apr  8 18:43 .
-drwxr-xr-x 20 llai 2023_london    317 Mar 29 19:07 ..
-drwxr-xr-x  2 llai 2023_london    216 Apr  8 18:43 bin
-drwxr-xr-x  8 llai 2023_london    201 Apr  8 17:34 .git
--rw-r--r--  1 llai 2023_london     20 Mar  9 20:22 .gitignore
-drwxr-xr-x  2 llai 2023_london     25 Apr  8 17:43 includes
--rw-r--r--  1 llai 2023_london     10 Apr  6 14:06 infile
--rw-r--r--  1 llai 2023_london      6 Apr  6 14:06 infile1
--rw-r--r--  1 llai 2023_london      5 Apr  7 14:49 infile3
-drwxr-xr-x  2 llai 2023_london   4096 Apr  8 18:40 libft
--rw-r--r--  1 llai 2023_london   1262 Apr  7 17:40 Makefile
--rwxr-xr-x  1 llai 2023_london 100944 Apr  8 18:43 minishell
--rw-r--r--  1 llai 2023_london      0 Apr  8 18:57 outfile
--rw-r--r--  1 llai 2023_london      2 Apr  8 18:57 outfile1
-drwxr-xr-x  2 llai 2023_london    216 Apr  8 18:43 src
+bin
+cmd
+cmd2
+includes
+infile
+infile1
+infile3
+libft
+Makefile
+minishell
+outfile
+outfile1
+outfile2
+src

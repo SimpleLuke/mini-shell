@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 10:46:55 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 11:13:29 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ char	*convert_dquote(char *str, t_data *data)
 		}
 		result[j] = '\0';
 		tmp = ft_strchr(result, '$');
-		printf("TMP: %s\n", tmp);
+		// printf("TMP: %s\n", tmp);
 		// printf("%p %s %d\n", result, tmp + 0, (int)(tmp - result));
 		result[(int)(tmp - result)] = '\0';
 		// envvar = ft_strdup(result);

@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:31:37 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 11:54:28 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,14 +119,14 @@ int	exist_var(char *arg, char *str, int *is_exist)
 	char	**arg_arr;
 
 	arg_arr = NULL;
-	*is_exist = 0;
 	arr = ft_split(str, '=');
 	if (ft_strchr(arg, '='))
 		arg_arr = ft_split(arg, '=');
 	else
 	{
-		arg_arr = malloc(sizeof(char **));
+		arg_arr = malloc(sizeof(char *) * 2);
 		arg_arr[0] = ft_strdup(arg);
+		arg_arr[1] = NULL;
 	}
 	if (arg_arr && ft_strlen(arg_arr[0]) == ft_strlen(arr[0]) && !ft_strncmp(arg_arr[0], arr[0], ft_strlen(arr[0])))
 	{
@@ -151,16 +151,24 @@ void	export_var(char *arg, t_data *data)
 	count = count_envlist(data->env_list);
 	tmp = malloc((count + 2) * sizeof(char **));
 	i = 0;
+	is_exist = 0;
 	while ((data->env_list)[i] != NULL)
 	{
 		if (exist_var(arg, (data->env_list)[i], &is_exist))
+		{
+			// fprintf(stderr, "here\n");
 			tmp[i] = ft_strdup(arg);
+		}
 		else
+		{
+			// fprintf(stderr, "there\n");
 			tmp[i] = ft_strdup((data->env_list)[i]);
+		}
 		i++;
 	}
 	if (!is_exist)
 	{
+		// fprintf(stderr, "here\n");
 		if (ft_strchr(arg, '='))
 			tmp[i] = ft_strdup(arg);
 		else
@@ -171,7 +179,10 @@ void	export_var(char *arg, t_data *data)
 		tmp[i + 1] = NULL;
 	}
 	else
+	{
+		// fprintf(stderr, "there\n");
 		tmp[i] = NULL;
+	}
 	i = 0;
 	while ((data->env_list)[i] != NULL)
 	{
