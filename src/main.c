@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:08:51 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:43:23 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 10:47:36 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int	main(int argc, char **argv, char **envp)
 		// print_node(data.tk_list);
 		if (parse(&data) != 0)
 			continue;
-		print_tree(data.ast);
+		// print_tree(data.ast);
 		execute_tree(&data);
 		// printf("%s\n", data.cmd.cmd);
 		ast_node_delete(data.ast);

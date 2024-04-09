@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 12:45:41 by llai             ###   ########.fr       */
+/*   Updated: 2024/04/09 10:46:55 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,10 @@ void	expand_token(t_ast *ast, t_data *data)
 		return ;
 	if (ast->data != NULL)
 	{
-		tmp = convert_token(ast->data, data);
+		if (ft_strlen(ast->data) == 2 && !ft_strncmp(ast->data, "$?", 2))
+			tmp = ft_itoa(data->exit_code);
+		else
+			tmp = convert_token(ast->data, data);
 		free(ast->data);
 		ast->data = tmp;
 	}
