@@ -7,7 +7,6 @@
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#demo">Demo</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
