@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:43:25 by llai              #+#    #+#             */
-/*   Updated: 2024/04/07 18:13:15 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:48:03 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	take_input(t_data *data)
 {
 	char	*buf;
 
-	rl_catch_signals = 0;
+	// rl_catch_signals = 0;
 	set_signals_interactive();
 	buf = readline("minishell$ ");
 	set_signals_noninteractive();
@@ -57,7 +57,7 @@ void	signint_handler(int signum)
 {
 	(void) signum;
 	write(1, "\n", 1);
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }

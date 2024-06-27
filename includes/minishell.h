@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:43:07 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:37:30 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,10 +161,12 @@ typedef struct s_data
 
 void	ignore_control_key(void);
 int		take_input(t_data *data);
-// void	tokenize(char *cmd_line, t_list **tk_list);
 void	tokenize(t_data *data);
-// int		parse(t_list *token_list, t_ast **syntax_tree);
 int		parse(t_data *data);
+
+int		count_type_in_token(int type, char *data);
+void	store_redirection(t_data *data);
+
 void	ast_attach_binary_branch(t_ast *root, t_ast *leftNode, t_ast *rightNode);
 void	ast_node_set_type(t_ast *node, t_NodeType nodetype);
 void	ast_node_set_data(t_ast *node, char *data);
@@ -208,9 +210,13 @@ int		init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe);
 void	execute_cmd(t_ast *node, t_data *data);
 void	free_cmd(t_data *data);
 int		execute_builtins(t_ast *node, t_data *data);
+int		execute_builtins_redirect(t_ast *node, t_data *data);
 int		execute_builtins_in_parent(t_ast *node, t_data *data);
 bool	isbuiltins(t_ast *node);
 bool	isbuiltins_in_parent(t_ast *node);
+
+// execute_cmd.c
+void	execute_cmd(t_ast *node, t_data *data);
 
 // error.c
 int		print_err(char *msg1, char *msg2, int errstate);

@@ -6,13 +6,14 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:08:01 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 11:54:28 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:49:37 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -85,7 +86,7 @@ int	cd(char *arg)
 	return (0);
 }
 
-int		count_envlist(char **env_list)
+int	count_envlist(char **env_list)
 {
 	int	i;
 
@@ -115,7 +116,7 @@ char	**copy_string_list(char **list)
 
 int	exist_var(char *arg, char *str, int *is_exist)
 {
-	char **arr;
+	char	**arr;
 	char	**arg_arr;
 
 	arg_arr = NULL;
@@ -155,20 +156,13 @@ void	export_var(char *arg, t_data *data)
 	while ((data->env_list)[i] != NULL)
 	{
 		if (exist_var(arg, (data->env_list)[i], &is_exist))
-		{
-			// fprintf(stderr, "here\n");
 			tmp[i] = ft_strdup(arg);
-		}
 		else
-		{
-			// fprintf(stderr, "there\n");
 			tmp[i] = ft_strdup((data->env_list)[i]);
-		}
 		i++;
 	}
 	if (!is_exist)
 	{
-		// fprintf(stderr, "here\n");
 		if (ft_strchr(arg, '='))
 			tmp[i] = ft_strdup(arg);
 		else
@@ -179,10 +173,7 @@ void	export_var(char *arg, t_data *data)
 		tmp[i + 1] = NULL;
 	}
 	else
-	{
-		// fprintf(stderr, "there\n");
 		tmp[i] = NULL;
-	}
 	i = 0;
 	while ((data->env_list)[i] != NULL)
 	{
@@ -207,10 +198,10 @@ void	env(char **env_list)
 
 void	unset_env(char *arg, t_data *data)
 {
-	int	i;
-	int	j;
-	int	count;
-	int	is_exist;
+	int		i;
+	int		j;
+	int		count;
+	int		is_exist;
 	char	**tmp;
 
 	i = 0;

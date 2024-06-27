@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 17:33:03 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 11:11:17 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:52:12 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	signal_reset_prompt(int signo)
 	(void)signo;
 	write(1, "\n", 1);
 	rl_on_new_line();
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	rl_redisplay();
 }
 

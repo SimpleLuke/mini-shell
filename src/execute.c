@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 12:34:15 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 12:38:06 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:23:07 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 void	execute_simple_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 {
-	// if (execute_builtins(node, data))
-	// 	return ;
 	init_cmd(node, data, rd_pipe, wr_pipe);
 	execute_cmd(node, data);
 	free_cmd(data);
@@ -34,7 +32,6 @@ void	execute_cmdpath(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 
 void	execute_pipe(t_ast *node, t_data *data)
 {
-	// int	data->pipe_fd[2];
 	int	wr_pipe;
 	int	rd_pipe;
 	t_ast	*next_node;
@@ -55,7 +52,6 @@ void	execute_pipe(t_ast *node, t_data *data)
 		next_node = next_node->right;
 	}
 	rd_pipe = data->pipe_fd[0];
-	// fprintf(stderr, "rd_pipe: %d\n", rd_pipe);
 	close(wr_pipe);
 	execute_cmdpath(next_node, data, rd_pipe, 1);
 	close(rd_pipe);
@@ -103,24 +99,17 @@ void	run_parent(t_data *data)
 	int	status;
 
 	close_fds(data);
-	// printf("%d\n", data->child_idx);
 	while (--data->child_idx >= 0)
 	{
 		wpid = waitpid(data->pids[data->child_idx], &status, 0);
-		// fprintf(stderr, "wpid: %d pid:%d\n", wpid, data->pids[data->child_idx]);
 		if (wpid == data->pids[data->child_idx])
 		{
 			if (WIFEXITED(status))
-			{
 				data->exit_code = WEXITSTATUS(status);
-				// fprintf(stderr, "code: %d\n", data->exit_code);
-
-			}
 		}
 	}
 	if (data->heredoc)
 		unlink(".temp_heredoc");
-	// fprintf(stderr,"here\n");
 }
 
 void	execute_tree(t_data *data)

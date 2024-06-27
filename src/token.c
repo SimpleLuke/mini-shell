@@ -6,10 +6,14 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 18:08:50 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 11:14:54 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/27 17:49:20 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
+
+static void handle_state(t_tokenizer *tker, t_list **head, char *token);
+static void add_to_tmp(t_tokenizer *tker, t_list **tmp_list, char *token);
+static void handle_end_state(t_tokenizer *tker, t_list **head);
 
 int	getchartype(char c)
 {
@@ -248,7 +252,6 @@ void	tmp_to_str(t_list **head, t_list *tmp, int type)
 		i++;
 	}
 	tokenstr[i] = '\0';
-	// printf("HERE:%s\n", tokenstr);
 	token = (t_token *)malloc(sizeof(t_token));
 	token->data = tokenstr;
 	token->type = type;
@@ -257,15 +260,8 @@ void	tmp_to_str(t_list **head, t_list *tmp, int type)
 
 void	expand_node(t_list *tk_list)
 {	
-	t_token	*data;
-
 	while (tk_list != NULL)
-	{
-		data = (t_token *)tk_list->content;
-		// printf("type: %d\n", data->type);
-		// printf("data: %s\n", data->data);
 		tk_list = tk_list->next;
-	}
 }
 
 char	*expand_strtoken(t_token *token, t_data *data)
@@ -278,13 +274,9 @@ char	*expand_strtoken(t_token *token, t_data *data)
 
 	str = token->data;
 	if (str[0] == '$')
-	{
 		result = get_envvar(str + 1, data);
-	}
 	else if (str[0] == '\'' && str[ft_strlen(str) - 1] == '\'')
-	{
 		result = convert_quote(str);
-	}
 	else if (str[0] == '\"' && str[ft_strlen(str) - 1] == '\"')
 	{
 		i = 0;
@@ -303,9 +295,7 @@ char	*expand_strtoken(t_token *token, t_data *data)
 		result = convert_dqtoken(tmp, data);
 	}
 	else
-	{
 		result = ft_strdup(str);
-	}
 	return (result);
 }
 
@@ -334,9 +324,7 @@ char	*expand_dqstrtoken(t_token *token, t_data *data)
 
 	str = token->data;
 	if (str[0] == '$')
-	{
 		result = get_envvar(str + 1, data);
-	}
 	else if (str[0] == '\"' && str[ft_strlen(str) - 1] == '\"')
 	{
 		i = 0;
@@ -355,9 +343,7 @@ char	*expand_dqstrtoken(t_token *token, t_data *data)
 		result = convert_dqtoken(tmp, data);
 	}
 	else
-	{
 		result = ft_strdup(str);
-	}
 	return (result);
 }
 
@@ -376,107 +362,68 @@ void	expanded_dqlist(t_list *lst, t_data *data)
 	}
 }
 
-char	*convert_token(char *token, t_data *data)
+char *convert_token(char *token, t_data *data)
 {
-	t_tokenizer	tker;
-	t_list		*head;
-	char		*result;
-	t_token		*node;
+	t_tokenizer tker = { 0 };
+	t_list *head = NULL;
+	char *result = NULL;
 
-	tker.i = 0;
-	tker.tmp = NULL;
-	tker.state = STATE_GENERAL;
-	head = NULL;
-	while (1)
+	while (token[tker.i] != '\0')
 	{
 		tker.chtype = getchartype(token[tker.i]);
-		// printf("%s\n", token);
-		// printf("%c\n", token[tker.i]);
-		if (tker.state == STATE_GENERAL)
-		{
-			if (tker.chtype == CHAR_QOUTE)
-			{
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-				tker.state = STATE_IN_QUOTE;
-				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			}
-			else if (tker.chtype == CHAR_DQUOTE)
-			{
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-				tker.state = STATE_IN_DQUOTE;
-				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			}
-			else if (tker.chtype == CHAR_DOLLAR)
-			{
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-				tker.state = STATE_IN_DOLLAR;
-				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			}
-			else
-			{
-				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			}
-		}
-		else if (tker.state == STATE_IN_QUOTE)
-		{
-			ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			if (token[tker.i] == CHAR_QOUTE || token[tker.i] == CHAR_NULL)
-			{
-				tker.state = STATE_GENERAL;
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-			}
-		}
-		else if (tker.state == STATE_IN_DQUOTE)
-		{
-			ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			if (token[tker.i] == CHAR_DQUOTE || token[tker.i] == CHAR_NULL)
-			{
-				tker.state = STATE_GENERAL;
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-			}
-		}
-		else if (tker.state == STATE_IN_DOLLAR)
-		{
-			// ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			// printf("this=>%c\n", token[tker.i]);
-			if (token[tker.i] == CHAR_DQUOTE || token[tker.i] == CHAR_QOUTE || token[tker.i] == CHAR_NULL)
-			{
-				tker.state = STATE_GENERAL;
-				tmp_to_str(&head, tker.tmp, tker.chtype);
-				ft_lstclear(&tker.tmp, free);
-				continue ;
-			}
-			ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-		}
-		if (token[tker.i] == CHAR_NULL)
-		{
-			tmp_to_str(&head, tker.tmp, tker.chtype);
-			ft_lstadd_back(&head, NULL);
-			ft_lstclear(&tker.tmp, free);
-			break;
-		}
+		handle_state(&tker, &head, token);
 		tker.i++;
 	}
-	// print_node(head);
-	// (void)data;
+	handle_end_state(&tker, &head);
 	expanded_list(head, data);
-	// printf("AFTER=============\n");
-	// print_node(head);
-	// printf("DONE==============\n");
+
 	result = ft_strdup("");
 	while (head)
 	{
-		node = head->content;
+		t_token *node = head->content;
 		if (node->data)
 			result = ft_strjoin_gnl(result, node->data, ft_strlen(node->data));
 		head = head->next;
 	}
 	return (result);
+}
+
+static void handle_state(t_tokenizer *tker, t_list **head, char *token)
+{
+	if (tker->state == STATE_GENERAL)
+	{
+		if (tker->chtype == CHAR_QOUTE || tker->chtype == CHAR_DQUOTE || tker->chtype == CHAR_DOLLAR)
+		{
+			handle_end_state(tker, head);
+			tker->state = (tker->chtype == CHAR_QOUTE) ? STATE_IN_QUOTE :
+						  (tker->chtype == CHAR_DQUOTE) ? STATE_IN_DQUOTE : STATE_IN_DOLLAR;
+			add_to_tmp(tker, head, token);
+		}
+		else
+			add_to_tmp(tker, head, token);
+	}
+	else if (tker->state == STATE_IN_QUOTE || tker->state == STATE_IN_DQUOTE || tker->state == STATE_IN_DOLLAR)
+	{
+		add_to_tmp(tker, head, token);
+		if (token[tker->i] == tker->chtype || token[tker->i] == CHAR_NULL)
+		{
+			tker->state = STATE_GENERAL;
+			handle_end_state(tker, head);
+		}
+	}
+}
+
+static void add_to_tmp(t_tokenizer *tker, t_list **tmp_list, char *token)
+{
+	ft_lstadd_back(tmp_list, ft_lstnew(ft_strdup(&(token[tker->i]))));
+}
+
+static void handle_end_state(t_tokenizer *tker, t_list **head)
+{
+	if (!tker->tmp)
+		return;
+	tmp_to_str(head, tker->tmp, tker->chtype);
+	ft_lstclear(&tker->tmp, free);
 }
 
 char	*convert_dqtoken(char *token, t_data *data)
@@ -493,8 +440,6 @@ char	*convert_dqtoken(char *token, t_data *data)
 	while (1)
 	{
 		tker.chtype = getchartype(token[tker.i]);
-		// printf("%s\n", token);
-		// printf("%c\n", token[tker.i]);
 		if (tker.state == STATE_GENERAL)
 		{
 			if (tker.chtype == CHAR_DOLLAR)
@@ -505,14 +450,10 @@ char	*convert_dqtoken(char *token, t_data *data)
 				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
 			}
 			else
-			{
 				ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			}
 		}
 		else if (tker.state == STATE_IN_DOLLAR)
 		{
-			// ft_lstadd_back(&tker.tmp, ft_lstnew(ft_strdup(&(token[tker.i]))));
-			// printf("this=>%c\n", token[tker.i]);
 			if (token[tker.i] == CHAR_QOUTE || token[tker.i] == CHAR_NULL)
 			{
 				tker.state = STATE_GENERAL;
@@ -530,17 +471,11 @@ char	*convert_dqtoken(char *token, t_data *data)
 		}
 		tker.i++;
 	}
-	// print_node(head);
-	// (void)data;
 	expanded_dqlist(head, data);
-	// printf("AFTER=============\n");
-	// print_node(head);
-	// printf("DONE==============\n");
 	result = ft_strdup("");
 	while (head)
 	{
 		node = head->content;
-		// printf("Heyy %s\n", node->data);
 		if (node->data)
 			result = ft_strjoin_gnl(result, node->data, ft_strlen(node->data));
 		head = head->next;
