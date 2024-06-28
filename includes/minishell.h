@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 15:44:54 by llai              #+#    #+#             */
-/*   Updated: 2024/04/08 17:43:07 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/28 20:04:35 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ void	execute_cmd(t_ast *node, t_data *data);
 void	free_cmd(t_data *data);
 int		execute_builtins(t_ast *node, t_data *data);
 int		execute_builtins_in_parent(t_ast *node, t_data *data);
+int		execute_builtins_redirect(t_ast *node, t_data *data);
 bool	isbuiltins(t_ast *node);
 bool	isbuiltins_in_parent(t_ast *node);
 

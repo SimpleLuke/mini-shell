@@ -136,16 +136,11 @@ bool	isbuiltins_in_parent(t_ast *node)
 
 	len = ft_strlen(node->data);
 	if ((len == 2 && !ft_strncmp(node->data, "cd", 2))
-		// (len == 4 && !ft_strncmp(node->data, "echo", 4)) 
-		// || (len == 3 && !ft_strncmp(node->data, "pwd", 3))
-		// || (len == 3 && !ft_strncmp(node->data, "env", 3))
 		|| (len == 5 && !ft_strncmp(node->data, "unset", 5))
 		|| (len == 6 && !ft_strncmp(node->data, "export", 6))
 		|| (len == 4 && !ft_strncmp(node->data, "exit", 4))
 	)
-	{
 		return (true);
-	}
 	return (false);
 }
 
@@ -155,16 +150,13 @@ int	init_cmd(t_ast *node, t_data *data, int rd_pipe, int wr_pipe)
 	if (!isbuiltins(node))
 		data->cmd.cmd = get_cmd(node->data, data);
 	else
-	{
 		data->cmd.cmd = ft_strdup(node->data);
-	}
 	if (!data->cmd.cmd)
 		print_err(data->cmd.cmd_args[0], "command not found", EXIT_FAILURE);
 	data->cmd.rd_pipe = rd_pipe;
 	data->cmd.wr_pipe = wr_pipe;
 	data->in_fd = -2;
 	data->out_fd = -2;
-	// print_strarr(data->cmd.cmd_args);
 	return (0);
 }
 
@@ -177,241 +169,105 @@ void	free_cmd(t_data *data)
 	data->cmd.wr_pipe = -1;
 }
 
-int	execute_builtins_redirect(t_ast *node, t_data *data)
+// Helper function for string comparison
+bool str_eq(const char *str1, const char *str2) {
+    return ft_strlen(str1) == ft_strlen(str2) && ft_strncmp(str1, str2, ft_strlen(str2)) == 0;
+}
+
+void handle_echo(t_data *data) {
+    if (arrlen(data->cmd.cmd_args) > 2 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n')) {
+        echo(true, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
+    } else if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n')) {
+        echo(true, NULL);
+    } else if (arrlen(data->cmd.cmd_args) > 1) {
+        echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
+    } else {
+        echo(false, "");
+    }
+}
+
+void handle_cd(t_ast *node) {
+    if (node->right != NULL) {
+        cd(node->right->data);
+    }
+}
+
+void handle_export(t_ast *node, t_data *data) {
+    if (node->right != NULL) {
+        // fprintf(stderr, "%s\n", node->right->data);
+        export_var(node->right->data, data);
+    }
+}
+
+void handle_unset(t_ast *node, t_data *data) {
+    if (node->right != NULL) {
+        // fprintf(stderr, "%s\n", node->right->data);
+        unset_env(node->right->data, data);
+    }
+}
+
+int execute_builtins_redirect(t_ast *node, t_data *data)
 {
-	if (ft_strlen(node->data) == ft_strlen("echo") && ft_strncmp(node->data, "echo", 4) == 0)
-	{
-		if (arrlen(data->cmd.cmd_args) > 2 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
-			echo(true, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
-		else if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n'))
-			echo(true, NULL);
-		else if (arrlen(data->cmd.cmd_args) > 1)
-			echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
-		else
-			echo(false, "");
+    if (str_eq(node->data, "echo"))
+    {
+        handle_echo(data);
+        return (1);
+    }
+    if (str_eq(node->data, "pwd"))
+    {
+        pwd();
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("pwd") && ft_strncmp(node->data, "pwd", 3) == 0)
-	{
-		pwd();
+    }
+    if (str_eq(node->data, "cd"))
+    {
+        handle_cd(node);
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("cd") && ft_strncmp(node->data, "cd", 2) == 0)
-	{
-		if (node->right != NULL)
-		{
-			cd(node->right->data);
-		}
+    }
+    if (str_eq(node->data, "env"))
+    {
+        env(data->env_list);
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("env") && ft_strncmp(node->data, "env", 3) == 0)
-	{
-		env(data->env_list);
+    }
+    if (str_eq(node->data, "export"))
+    {
+        handle_export(node, data);
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("export") && ft_strncmp(node->data, "export", 6) == 0)
-	{
-		if (node->right != NULL)
-		{
-			// fprintf(stderr, "%s\n", node->right->data);
-			export_var(node->right->data, data);
-		}
+    }
+    if (str_eq(node->data, "exit"))
+        // Handle exit if any additional logic is required
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("exit") && ft_strncmp(node->data, "exit", 4) == 0)
-	{
+    if (str_eq(node->data, "unset"))
+    {
+        handle_unset(node, data);
 		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("unset") && ft_strncmp(node->data, "unset", 5) == 0)
-	{
-		if (node->right != NULL)
-		{
-			// fprintf(stderr, "%s\n", node->right->data);
-			unset_env(node->right->data, data);
-		}
-		return (1);
-	}
+    }
 	return (0);
 }
 
-int	execute_builtins_in_parent(t_ast *node, t_data *data)
+int execute_builtins_in_parent(t_ast *node, t_data *data)
 {
-	(void)data;
-	(void)node;
-	if (ft_strlen(node->data) == ft_strlen("cd") && ft_strncmp(node->data, "cd", 2) == 0)
-	{
-		if (node->right != NULL)
-		{
-			cd(node->right->data);
-		}
-		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("export") && ft_strncmp(node->data, "export", 6) == 0)
-	{
-		if (node->right != NULL)
-		{
-			// fprintf(stderr, "%s\n", node->right->data);
-			export_var(node->right->data, data);
-		}
-		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("exit") && ft_strncmp(node->data, "exit", 4) == 0)
-	{
-		exit_shell();
-		return (1);
-	}
-	else if (ft_strlen(node->data) == ft_strlen("unset") && ft_strncmp(node->data, "unset", 5) == 0)
-	{
-		if (node->right != NULL)
-		{
-			// fprintf(stderr, "%s\n", node->right->data);
-			unset_env(node->right->data, data);
-		}
-		return (1);
-	}
-	return (0);
-}
+    (void)data;
+    (void)node;
 
-void	execute_cmd(t_ast *node, t_data *data)
-{
-	pid_t	pid;
-	// int		data->in_fd;
-	// int		data->out_fd;
-	int		i;
-	// check built-ins
-	// built in tbc
-
-	data->pids[data->child_idx] = fork();
-	pid = data->pids[data->child_idx];
-	// if (pid > 0)
-	// {
-	// 	// fprintf(stderr, "idx: %d\n", data->child_idx);
-	// 	data->child_idx++;
-	// }
-	// fprintf(stderr,"child idx: %d pid: %d\n", data->child_idx, pid);
-	if (pid == 0)
-	{
-		if (data->cmd.rd_pipe != -1 && data->in_fd < 0)
-		{
-			// fprintf(stderr, "pipe rd : %d child: %d\n", data->cmd.rd_pipe, data->child_idx);
-			dup2(data->cmd.rd_pipe, STDIN_FILENO);
-			// if (data->cmd.rd_pipe > 2)
-			// {
-			// 	// fprintf(stderr, "close rd\n");
-			// 	close(data->cmd.rd_pipe);
-			// }
-
-		}
-		if (data->cmd.wr_pipe != -1 && data->out_fd < 0)
-		{
-			// fprintf(stderr, "write : %d\n", data->cmd.wr_pipe);
-			// fprintf(stderr, "pipe wr : %d child: %d\n", data->cmd.wr_pipe, data->child_idx);
-			dup2(data->cmd.wr_pipe, STDOUT_FILENO);
-			// if (data->cmd.wr_pipe > 2)
-			// {
-			// 	// fprintf(stderr, "close wr\n");
-			// 	close(data->cmd.wr_pipe);
-			// }
-		}
-
-		if (data->io.in_size)
-		{
-			i = 0;
-			while (i < data->io.in_size)
-			{
-				// if (data->io.infile_list[i].type == CHAR_LESSER)
-				if (data->io.infile_list[i].type == CHAR_LESSER && data->io.infile_list[i].idx == data->child_idx)
-				{
-					if (data->in_fd != -1)
-						close(data->in_fd);
-					data->in_fd = open(data->io.infile_list[i].name, O_RDONLY);
-					if (data->in_fd == -1)
-					{
-						print_err(data->io.infile_list[i].name, strerror(errno), EXIT_FAILURE);
-						exit(EXIT_FAILURE);
-					}
-				}
-				// else if (data->io.infile_list[i].type == CHAR_HEREDOC && data->io.infile_list[i].idx == data->child_idx)
-				// {
-				// 	if (data->in_fd != -1)
-				// 		close(data->in_fd);
-				// 	create_heredoc(data, data->io.infile_list[i]);
-				// 	data->in_fd = open(".temp_heredoc", O_RDONLY, 0666);
-				// 	if (data->in_fd == -1)
-				// 	{
-				// 		print_err("here_doc", strerror(errno), EXIT_FAILURE);
-				// 	}
-				// 	data->heredoc = true;
-				// 	data->io.infile_list[i].type = CHAR_LESSER;
-				// }
-				i++;
-			}
-			dup2(data->in_fd, STDIN_FILENO);
-			// close(data->in_fd);
-		}
-
-		if (data->io.out_size)
-		{
-			i = 0;
-			while (i < data->io.out_size)
-			{
-				// fprintf(stderr, "here %d %d %s\n", data->child_idx, i,data->io.outfile_list[i].name);
-				// fprintf(stderr,"out: %d %d %s \n", data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
-				// fprintf(stderr,"out: %d %d %s \n", data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
-				if (data->io.outfile_list[i].type == CHAR_GREATER && data->io.outfile_list[i].idx == data->child_idx)
-				{
-					if (data->out_fd > -1)
-						close(data->out_fd);
-					data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-				}
-				else if (data->io.outfile_list[i].type == CHAR_APPEND && data->io.outfile_list[i].idx == data->child_idx)
-				{
-					if (data->out_fd > -1)
-						close(data->out_fd);
-					data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
-				}
-				if (data->out_fd == -1)
-				{
-					print_err(data->io.outfile_list[i].name, strerror(errno), EXIT_FAILURE);
-					exit(EXIT_FAILURE);
-				}
-				i++;
-			}
-			// fprintf(stderr, "fdout : %d child: %d\n", data->out_fd, data->child_idx);
-			dup2(data->out_fd, STDOUT_FILENO);
-			// close(data->out_fd);
-		}
-
-		// if (data->cmd.rd_pipe != -1 && data->in_fd < 0)
-		// {
-		// 	dup2(data->cmd.rd_pipe, STDIN_FILENO);
-		// 	// close(data->cmd.rd_pipe);
-		// }
-		// if (data->cmd.wr_pipe != -1 && data->out_fd < 0)
-		// {
-		// 	dup2(data->cmd.wr_pipe, STDOUT_FILENO);
-		// 	// close(data->cmd.wr_pipe);
-		// }
-		close_fds(data);
-		if (data->cmd.cmd == NULL)
-			err_exit(EXIT_FAILURE, data);
-		if (execute_builtins_redirect(node, data))
-			exit(EXIT_SUCCESS) ;
-
-		// fprintf(stderr,"here in %d %d\n", data->child_idx, STDOUT_FILENO);
-		if (execve(data->cmd.cmd, data->cmd.cmd_args, data->env_list) == -1)
-		{
-			dup2(data->std_out, STDOUT_FILENO);
-			err_exit(print_err(data->cmd.cmd_args[0], strerror(errno), EXIT_FAILURE), data);
-		}
-	}
-	else if (pid < 0)
-	{
-		perror("fork");
-		return ;
-	}
-		// fprintf(stderr,"here\n");
-	data->child_idx++;
-	// while (waitpid(pid, NULL, 0) <= 0);
-	return ;
+    if (str_eq(node->data, "cd"))
+    {
+        handle_cd(node);
+        return (1);
+    }
+    if (str_eq(node->data, "export"))
+    {
+        handle_export(node, data);
+        return (1);
+    }
+    if (str_eq(node->data, "exit"))
+    {
+        exit_shell();
+        return (1);
+    }
+    if (str_eq(node->data, "unset"))
+    {
+        handle_unset(node, data);
+        return (1);
+    }
+    return (0);
 }
