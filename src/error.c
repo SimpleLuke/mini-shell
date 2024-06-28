@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 13:39:10 by llai              #+#    #+#             */
-/*   Updated: 2024/04/05 13:41:59 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/28 20:05:49 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,5 @@ int	print_err(char *msg1, char *msg2, int errstate)
 void	err_exit(int errstate, t_data *data)
 {
 	(void)data;
-	// if (data)
-	// {
-	// 	close_fds(data);
-	// 	if (data->pipes)
-	// 		ft_free((void **)&data->pipes);
-	// 	if (data->pids)
-	// 		ft_free((void **)&data->pids);
-	// }
 	exit(errstate);
 }

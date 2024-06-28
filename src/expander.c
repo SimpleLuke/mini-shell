@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:27:57 by llai              #+#    #+#             */
-/*   Updated: 2024/04/09 11:13:29 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/28 20:24:35 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ char	*dquote_data(char *data)
 	result = ft_strdup("\"");
 	result = ft_strjoin_gnl(result, data, ft_strlen(data));
 	result = ft_strjoin_gnl(result, "\"", 1);
-	// printf("!!!!!!!!!!!%s\n", result);
 	return (result);
 }
 
@@ -32,10 +31,10 @@ void	add_dquote(t_ast *ast)
 
 	if (ast == NULL)
 		return ;
-	if (ast->type == NODE_ARGUMENT && ast->data != NULL && !(ast->data[0] == '\'' && ast->data[ft_strlen(ast->data) - 1] == '\'')
+	if (ast->type == NODE_ARGUMENT && ast->data != NULL
+		&& !(ast->data[0] == '\'' && ast->data[ft_strlen(ast->data) - 1] == '\'')
 		&& !(ast->data[0] == '\"' && ast->data[ft_strlen(ast->data) - 0] == '\"'))
 	{
-		// printf("HERE\n");
 		tmp = dquote_data(ast->data);
 		free(ast->data);
 		ast->data = tmp;
@@ -76,7 +75,8 @@ void	expand_quote(t_ast *ast)
 
 	if (ast == NULL)
 		return ;
-	if (ast->data != NULL && ast->data[0] == '\'' && ast->data[ft_strlen(ast->data) - 1] == '\'')
+	if (ast->data != NULL && ast->data[0] == '\''
+		&& ast->data[ft_strlen(ast->data) - 1] == '\'')
 	{
 		tmp = convert_quote(ast->data);
 		free(ast->data);
@@ -108,9 +108,7 @@ char	*get_envvar(char *arg, t_data *data)
 	while (data->env_list[i] != NULL)
 	{
 		if (exist_var(arg, (data->env_list[i]), &is_exist))
-		{
 			result = get_env_value(data->env_list[i]);
-		}
 		i++;
 	}
 	return (result);
@@ -140,11 +138,7 @@ char	*convert_dquote(char *str, t_data *data)
 		}
 		result[j] = '\0';
 		tmp = ft_strchr(result, '$');
-		// printf("TMP: %s\n", tmp);
-		// printf("%p %s %d\n", result, tmp + 0, (int)(tmp - result));
 		result[(int)(tmp - result)] = '\0';
-		// envvar = ft_strdup(result);
-		// envvar[(int) (tmp - result)] = '\0';
 		envvar = get_envvar((tmp + 1), data);
 		if (envvar)
 			result = ft_strjoin_gnl(result, envvar, ft_strlen(envvar));
@@ -159,7 +153,8 @@ void	expand_dquote(t_ast *ast, t_data *data)
 
 	if (ast == NULL)
 		return ;
-	if (ast->data != NULL && ast->data[0] == '\"' && ast->data[ft_strlen(ast->data) - 1] == '\"')
+	if (ast->data != NULL && ast->data[0] == '\"'
+		&& ast->data[ft_strlen(ast->data) - 1] == '\"')
 	{
 		tmp = convert_dquote(ast->data, data);
 		free(ast->data);

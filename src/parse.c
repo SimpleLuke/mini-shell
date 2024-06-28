@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 11:27:33 by llai              #+#    #+#             */
-/*   Updated: 2024/04/06 16:23:31 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/28 20:25:10 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-t_ast	*simplecmd(t_data *data);
-t_ast	*simplecmd1(t_data *data);
-t_ast	*tokenlist(t_data *data);
-t_ast	*tokenlist1(t_data *data);
-t_ast	*tokenlist2(t_data *data);
-t_ast	*cmd(t_data *data);
-t_ast	*cmd1(t_data *data);
-t_ast	*cmd2(t_data *data);
-t_ast	*cmd3(t_data *data);
-t_ast	*cmd4(t_data *data);
-t_ast	*cmd5(t_data *data);
-t_ast	*cmd6(t_data *data);
-t_ast	*job1(t_data *data);
-t_ast	*job2(t_data *data);
+t_ast	*parse_command_path(t_data *data);
+t_ast	*parse_token_list(t_data *data);
+t_ast	*parse_argument_list(t_data *data);
+t_ast	*parse_emtpy_argument(t_data *data);
+t_ast	*parse_pipe_sequence(t_data *data);
+t_ast	*parse_simple_command(t_data *data);
 
-bool	term(t_data *data, int tokentype, char **buffer)
+bool	term_match(t_data *data, int tokentype, char **buffer)
 {
 	t_token	*token;
 
@@ -67,41 +59,40 @@ bool	term(t_data *data, int tokentype, char **buffer)
 	return (false);
 }
 
-t_ast	*job(t_data *data)
+t_ast	*parse_job(t_data *data)
 {
 	t_ast	*node;
 	t_list	*tmp;
 
-	// printf("job\n");
 	tmp = data->cur_token;
 	data->cur_token = tmp;
 	// <command> '|' <job>
-	node = job1(data);
+	node = parse_pipe_sequence(data);
 	if (node != NULL)
 		return (node);
 	data->cur_token = tmp;
 	// <command>
-	node = job2(data);
+	node = parse_simple_command(data);
 	if (node != NULL)
 		return (node);
 	return (NULL);
 }
 
-t_ast	*job1(t_data *data)
+t_ast	*parse_pipe_sequence(t_data *data)
 {
 	t_ast	*cmd_node;
 	t_ast	*job_node;
 	t_ast	*result;
 
-	cmd_node = cmd(data);
+	cmd_node = parse_simple_command(data);
 	if (cmd_node == NULL)
 		return (NULL);
-	if (!term(data, CHAR_PIPE, NULL))
+	if (!term_match(data, CHAR_PIPE, NULL))
 	{
 		ast_node_delete(cmd_node);
 		return (NULL);
 	}
-	job_node = job(data);
+	job_node = parse_job(data);
 	if (job_node == NULL)
 	{
 		ast_node_delete(job_node);
@@ -113,48 +104,30 @@ t_ast	*job1(t_data *data)
 	return (result);
 }
 
-t_ast	*job2(t_data *data)
-{
-	return (cmd(data));
-}
-
-t_ast	*cmd(t_data *data)
+t_ast	*parse_simple_command(t_data *data)
 {
 	t_ast	*node;
 	t_list	*tmp;
 
-	// printf("cmd\n");
 	tmp = data->cur_token;
 	data->cur_token = tmp;
 	// <simple command>
-	node = cmd5(data);
+	node = parse_command_path(data);
 	if (node != NULL)
 		return (node);
 	return (NULL);
 }
 
-t_ast	*cmd5(t_data *data)
-{
-	// printf("cmd5\n");
-	return (simplecmd(data));
-}
-
-t_ast	*simplecmd(t_data *data)
-{
-	return (simplecmd1(data));
-}
-
-t_ast	*simplecmd1(t_data *data)
+t_ast	*parse_command_path(t_data *data)
 {
 	t_ast	*token_list_node;
 	t_ast	*result;
 	char	*pathname;
 
-	// printf("simplecmd1\n");
-	if (!term(data, TOKEN, &pathname))
+	if (!term_match(data, TOKEN, &pathname))
 		return (NULL);
 	// <pathname> <token list>
-	token_list_node = tokenlist(data);
+	token_list_node = parse_token_list(data);
 	result = malloc(sizeof(t_ast));
 	ast_node_set_type(result, NODE_CMDPATH);
 	ast_node_set_data(result, pathname);
@@ -162,48 +135,35 @@ t_ast	*simplecmd1(t_data *data)
 	return (result);
 }
 
-t_ast	*tokenlist(t_data *data)
+t_ast	*parse_token_list(t_data *data)
 {
 	t_list	*tmp;
 	t_ast	*node;
 
 	tmp = data->cur_token;
-	// printf("tokenlist\n");
 	data->cur_token = tmp;
 	// <token> <token list>
-	node = tokenlist1(data);
+	node = parse_argument_list(data);
 	if (node != NULL)
 		return (node);
 	data->cur_token = tmp;
-	// (EMPTY)
-	node = tokenlist2(data);
-	if (node != NULL)
-		return (node);
 	return (NULL);
 }
 
-t_ast	*tokenlist1(t_data *data)
+t_ast	*parse_argument_list(t_data *data)
 {
 	t_ast	*token_list_node;
 	t_ast	*result;
 	char	*arg;
 
-	// printf("tokenlist1\n");
-	if (!term(data, TOKEN, &arg))
+	if (!term_match(data, TOKEN, &arg))
 		return (NULL);
-	token_list_node = tokenlist(data);
+	token_list_node = parse_token_list(data);
 	result = malloc(sizeof(t_ast));
 	ast_node_set_type(result, NODE_ARGUMENT);
 	ast_node_set_data(result, arg);
 	ast_attach_binary_branch(result, NULL, token_list_node);
 	return (result);
-}
-
-t_ast	*tokenlist2(t_data *data)
-{
-	(void)data;
-	// printf("tokenlist2\n");
-	return (NULL);
 }
 
 int	count_type(int type, t_list *tk_list)
@@ -426,10 +386,8 @@ int	parse(t_data *data)
 	if (check_unclosed(data->tk_list))
 		return (-1);
 	store_redirection(data);
-	// printf("out: %d %d %s \n", data->io.outfile_list[0].idx, data->io.outfile_list[0].type, data->io.outfile_list[0].name);
-	// printf("out: %d %d %s \n", data->io.outfile_list[1].idx, data->io.outfile_list[1].type, data->io.outfile_list[1].name);
 	data->cur_token = data->tk_list;
-	data->ast = job(data);
+	data->ast = parse_job(data);
 	if (data->cur_token != NULL)
 		token = data->cur_token->content;
 	if (data->cur_token != NULL && token->type != 0)
@@ -437,11 +395,6 @@ int	parse(t_data *data)
 		printf("Syntax Error near: %s\n", token->data);
 		return (-1);
 	}
-	// char *tmp = convert_token("$USER\"hello$USER'hi'\"$USER'bye'", data);
-	// printf("HEREEE: %s\n", tmp);
 	expand_token(data->ast, data);
-	// add_dquote(data->ast);
-	// expand_quote(data->ast);
-	// expand_dquote(data->ast, data);
 	return (0);
 }

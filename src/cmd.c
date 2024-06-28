@@ -170,40 +170,41 @@ void	free_cmd(t_data *data)
 }
 
 // Helper function for string comparison
-bool str_eq(const char *str1, const char *str2) {
-    return ft_strlen(str1) == ft_strlen(str2) && ft_strncmp(str1, str2, ft_strlen(str2)) == 0;
+bool str_eq(const char *str1, const char *str2)
+{
+    return (ft_strlen(str1) == ft_strlen(str2)
+	&& ft_strncmp(str1, str2, ft_strlen(str2)) == 0);
 }
 
 void handle_echo(t_data *data) {
-    if (arrlen(data->cmd.cmd_args) > 2 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n')) {
+    if (arrlen(data->cmd.cmd_args) > 2 && data->cmd.cmd_args[1][0] == '-'
+		&& ft_strchr(data->cmd.cmd_args[1], 'n')) 
         echo(true, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
-    } else if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-' && ft_strchr(data->cmd.cmd_args[1], 'n')) {
+    else if (arrlen(data->cmd.cmd_args) > 1 && data->cmd.cmd_args[1][0] == '-'
+			&& ft_strchr(data->cmd.cmd_args[1], 'n'))
         echo(true, NULL);
-    } else if (arrlen(data->cmd.cmd_args) > 1) {
+    else if (arrlen(data->cmd.cmd_args) > 1)
         echo(false, data->cmd.cmd_args[arrlen(data->cmd.cmd_args) - 1]);
-    } else {
+    else
         echo(false, "");
-    }
 }
 
-void handle_cd(t_ast *node) {
-    if (node->right != NULL) {
+void handle_cd(t_ast *node)
+{
+    if (node->right != NULL)
         cd(node->right->data);
-    }
 }
 
-void handle_export(t_ast *node, t_data *data) {
-    if (node->right != NULL) {
-        // fprintf(stderr, "%s\n", node->right->data);
+void handle_export(t_ast *node, t_data *data)
+{
+    if (node->right != NULL)
         export_var(node->right->data, data);
-    }
 }
 
-void handle_unset(t_ast *node, t_data *data) {
-    if (node->right != NULL) {
-        // fprintf(stderr, "%s\n", node->right->data);
+void handle_unset(t_ast *node, t_data *data)
+{
+    if (node->right != NULL)
         unset_env(node->right->data, data);
-    }
 }
 
 int execute_builtins_redirect(t_ast *node, t_data *data)

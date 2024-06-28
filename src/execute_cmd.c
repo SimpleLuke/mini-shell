@@ -6,7 +6,7 @@
 /*   By: llai <llai@student.42london.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 17:19:48 by llai              #+#    #+#             */
-/*   Updated: 2024/06/28 20:03:41 by llai             ###   ########.fr       */
+/*   Updated: 2024/06/28 20:24:04 by llai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,10 @@ void execute_child_process(t_ast *node, t_data *data)
 void handle_redirections(t_data *data)
 {
     if (data->io.in_size)
-    {
         handle_infile_redirection(data);
-    }
 
     if (data->io.out_size)
-    {
         handle_outfile_redirection(data);
-    }
 }
 
 void handle_infile_redirection(t_data *data)
@@ -76,7 +72,8 @@ void handle_infile_redirection(t_data *data)
     int i = 0;
     while (i < data->io.in_size)
     {
-        if (data->io.infile_list[i].type == CHAR_LESSER && data->io.infile_list[i].idx == data->child_idx)
+        if (data->io.infile_list[i].type == CHAR_LESSER
+			&& data->io.infile_list[i].idx == data->child_idx)
         {
             if (data->in_fd != -1)
                 close(data->in_fd);
@@ -97,17 +94,21 @@ void handle_outfile_redirection(t_data *data)
     int i = 0;
     while (i < data->io.out_size)
     {
-        if (data->io.outfile_list[i].type == CHAR_GREATER && data->io.outfile_list[i].idx == data->child_idx)
+        if (data->io.outfile_list[i].type == CHAR_GREATER
+			&& data->io.outfile_list[i].idx == data->child_idx)
         {
             if (data->out_fd > -1)
                 close(data->out_fd);
-            data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+            data->out_fd = open(data->io.outfile_list[i].name,
+								O_WRONLY | O_CREAT | O_TRUNC, 0666);
         }
-        else if (data->io.outfile_list[i].type == CHAR_APPEND && data->io.outfile_list[i].idx == data->child_idx)
+        else if (data->io.outfile_list[i].type == CHAR_APPEND
+			&& data->io.outfile_list[i].idx == data->child_idx)
         {
             if (data->out_fd > -1)
                 close(data->out_fd);
-            data->out_fd = open(data->io.outfile_list[i].name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+            data->out_fd = open(data->io.outfile_list[i].name,
+								O_WRONLY | O_CREAT | O_APPEND, 0666);
         }
         if (data->out_fd == -1)
         {
